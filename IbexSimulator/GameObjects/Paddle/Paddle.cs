@@ -1,0 +1,175 @@
+using IbexGame.Utility;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using MonoGameLibrary;
+using MonoGameLibrary.Graphics;
+
+namespace IbexGame.GameObjects;
+
+public enum PaddleState
+{
+    NORMAL,
+    FAST,
+    SLOW,
+    MAGNETIC,
+    STICKY,
+    GOLDEN
+}
+
+public static class SizeScale
+{
+    public const float NORMAL = 0.15f;
+    public const float BIG = 0.2f;
+    public const float SMALL = 0.1f;
+
+}
+
+public class Paddle
+{
+    private Vector2 _position;
+
+    private Vector2 _velocity;
+
+    private Sprite _paddleSprite;
+
+    private Texture2D _fastPaddle;
+    private Texture2D _goldenPaddle;
+    private Texture2D _magneticPaddle;
+    private Texture2D _normalPaddle;
+    private Texture2D _slowPaddle;
+    private Texture2D _stickyPaddle;
+
+    private float xSizeScale;
+
+    private Vector2 SCALE;
+
+    private const float NORMAL_SPEED = 5f;
+    private const float SLOW_SPEED = 4f;
+    private const float FAST_SPEED = 6.0f;
+
+    //private float _speed = NORMAL_SPEED;
+
+    private int _lives = 3;
+
+    private PaddleState _paddleState;
+
+    public Paddle()
+    {
+        _paddleState = PaddleState.NORMAL;
+
+        float windowHeight = Core.GraphicsDevice.PresentationParameters.BackBufferHeight;
+        float windowWidth = Core.GraphicsDevice.PresentationParameters.BackBufferWidth;
+
+        _position = new Vector2(
+            windowWidth * 0.5f,
+            windowHeight * 0.9f);
+
+        xSizeScale = SizeScale.BIG;
+
+        SCALE = new(xSizeScale, 0.15f);
+
+    }
+
+    public void LoadContent()
+    {
+        _fastPaddle = Core.Content.Load<Texture2D>("images/paddles/paddle_fast_outline");
+        _magneticPaddle = Core.Content.Load<Texture2D>("images/paddles/paddle_magnetic_outline");
+        _goldenPaddle = Core.Content.Load<Texture2D>("images/paddles/paddle_golden_outline");
+        _normalPaddle = Core.Content.Load<Texture2D>("images/paddles/paddle_normal_outline");
+        _slowPaddle = Core.Content.Load<Texture2D>("images/paddles/paddle_slow_outline");
+        _stickyPaddle = Core.Content.Load<Texture2D>("images/paddles/paddle_sticky_outline");
+
+        _paddleSprite = new Sprite(_normalPaddle)
+        {
+            Scale = SCALE
+        };
+        _paddleSprite.CenterOrigin();
+    }
+
+    public void Update(GameTime gameTime)
+    {
+
+        float direction = (float)Moving.IsMoving();
+        Vector2 newPosition = _position;
+
+        _velocity = _paddleState switch
+        {
+            PaddleState.FAST => new Vector2(direction * FAST_SPEED, 0f),
+            PaddleState.SLOW => new Vector2(direction * SLOW_SPEED, 0f),
+            _ => new Vector2(direction * NORMAL_SPEED, 0f),
+        };
+
+        newPosition += _velocity;
+
+        // Create a bounding rectangle for the screen.
+        Rectangle screenBounds = new(
+            0,
+            0,
+            Core.GraphicsDevice.PresentationParameters.BackBufferWidth,
+            Core.GraphicsDevice.PresentationParameters.BackBufferHeight
+        );
+
+        Rectangle paddleBounds = getBounds();
+
+        if(paddleBounds.Left < screenBounds.Left)
+        {
+            newPosition.X = _paddleSprite.Width * 0.5f;
+        }
+
+        if(paddleBounds.Right > screenBounds.Right)
+        {
+            newPosition.X = screenBounds.Right - _paddleSprite.Width * 0.5f;
+        }
+
+        _position = newPosition;
+    }
+
+    public void Draw()
+    {
+        _paddleSprite.Draw(Core.SpriteBatch, _position);
+    }
+
+    public Rectangle getBounds()
+    {
+        // Creating a bounding rectangle for the paddle
+        Rectangle bounds = new Rectangle(
+            (int)(_position.X - _paddleSprite.Width*0.5f),
+            (int)(_position.Y - _paddleSprite.Height*0.5f),
+            (int)_paddleSprite.Width,
+            (int)_paddleSprite.Height
+        );
+
+        return bounds;
+    }
+
+    public float getDirection()
+    {
+        return _velocity.X;
+    }
+
+    public Vector2 getPosition()
+    {
+        return _position;
+    }
+
+    public float getPaddleHeight()
+    {
+        return _paddleSprite.Height;
+    }
+
+    // private bool IsShootingPressed(KeyboardState currentKeyboardState, GamePadState currentGamePadstate)
+    // {
+    //     bool isButtonPressedKeyBoard = currentKeyboardState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space);
+    //     bool isButtonPressedGamePad = currentGamePadstate.IsButtonDown(Buttons.A) && previousGamePadState.IsButtonUp(Buttons.A);
+    //     bool isButtonPressed = isButtonPressedKeyBoard || isButtonPressedGamePad;
+
+    //     return isButtonPressed;
+    // }
+
+    // public bool _detachBall()
+    // {
+    //     return !_attachBall;
+    // }
+
+}

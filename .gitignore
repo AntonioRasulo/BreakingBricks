@@ -1,0 +1,8 @@
+MonoGameLibrary/bin/*
+MonoGameLibrary/obj/*
+IbexSimulator/bin/*
+IbexSimulator/obj/*
+IbexSimulator/Content/obj/*
+IbexSimulator/Content/bin/*
+MonoGameLibrary/SharedContent/obj/*
+MonoGameLibrary/SharedContent/bin/*
