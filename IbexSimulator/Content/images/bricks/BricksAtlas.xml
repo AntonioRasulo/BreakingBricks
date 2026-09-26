@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas>
+    <Texture>images/bricks/bricks</Texture>
+        <Regions>
+            <Region name="smallGray3" x="0" y="7" width="32" height="9"  />
+            <Region name="smallGray2" x="32" y="7" width="32" height="9"  />
+            <Region name="smallGray1" x="64" y="7" width="32" height="9"  />
+            <Region name="smallGreen3" x="0" y="23" width="32" height="9"  />
+            <Region name="smallGreen2" x="32" y="23" width="32" height="9"  />
+            <Region name="smallGreen1" x="64" y="23" width="32" height="9"  />
+            <Region name="smallYellow3" x="0" y="39" width="32" height="9"  />
+            <Region name="smallYellow2" x="32" y="39" width="32" height="9"  />
+            <Region name="smallYellow1" x="64" y="39" width="32" height="9"  />
+            <Region name="smallOrange3" x="0" y="55" width="32" height="9"  />
+            <Region name="smallOrange2" x="32" y="55" width="32" height="9"  />
+            <Region name="smallOrange1" x="64" y="55" width="32" height="9"  />
+            <Region name="smallRed3" x="0" y="71" width="32" height="9"  />
+            <Region name="smallRed2" x="32" y="71" width="32" height="9"  />
+            <Region name="smallRed1" x="64" y="71" width="32" height="9"  />
+            <Region name="smallViolet3" x="0" y="87" width="32" height="9"  />
+            <Region name="smallViolet2" x="32" y="87" width="32" height="9"  />
+            <Region name="smallViolet1" x="64" y="87" width="32" height="9"  />
+            <Region name="bigGray3" x="112" y="0" width="32" height="16"  />
+            <Region name="bigGray2" x="144" y="0" width="32" height="16"  />
+            <Region name="bigGray1" x="176" y="0" width="32" height="16"  />
+            <Region name="bigGreen3" x="112" y="16" width="32" height="16"  />
+            <Region name="bigGreen2" x="144" y="16" width="32" height="16"  />
+            <Region name="bigGreen1" x="176" y="16" width="32" height="16"  />
+            <Region name="bigYellow3" x="112" y="32" width="32" height="16"  />
+            <Region name="bigYellow2" x="144" y="32" width="32" height="16"  />
+            <Region name="bigYellow1" x="176" y="32" width="32" height="16"  />
+            <Region name="bigOrange3" x="112" y="48" width="32" height="16"  />
+            <Region name="bigOrange2" x="144" y="48" width="32" height="16"  />
+            <Region name="bigOrange1" x="176" y="48" width="32" height="16"  />
+            <Region name="bigRed3" x="112" y="64" width="32" height="16"  />
+            <Region name="bigRed2" x="144" y="64" width="32" height="16"  />
+            <Region name="bigRed1" x="176" y="64" width="32" height="16"  />
+            <Region name="bigViolet3" x="112" y="80" width="32" height="16"  />
+            <Region name="bigViolet2" x="144" y="80" width="32" height="16"  />
+            <Region name="bigViolet1" x="176" y="80" width="32" height="16"  />
+            <Region name="squareGray2" x="224" y="7" width="16" height="16"  />
+            <Region name="squareGray1" x="240" y="7" width="16" height="16"  />
+            <Region name="squareGreen2" x="224" y="23" width="16" height="16"  />
+            <Region name="squareGreen1" x="240" y="23" width="16" height="16"  />
+            <Region name="squareYellow2" x="224" y="39" width="16" height="16"  />
+            <Region name="squareYellow1" x="240" y="39" width="16" height="16"  />
+            <Region name="squareOrange2" x="224" y="55" width="16" height="16"  />
+            <Region name="squareOrange1" x="240" y="55" width="16" height="16"  />
+            <Region name="squareRed2" x="224" y="71" width="16" height="16"  />
+            <Region name="squareRed1" x="240" y="71" width="16" height="16"  />
+            <Region name="squareViolet2" x="224" y="87" width="16" height="16"  />
+            <Region name="squareViolet1" x="240" y="87" width="16" height="16"  />
+        </Regions>
+    <Animations>
+
+    </Animations>
+</TextureAtlas>

@@ -3,6 +3,7 @@ using MonoGameLibrary;
 using IbexGame.Scenes;
 using System;
 using IbexGame.GameObjects;
+using IbexGame.Config;
 
 namespace IbexGame.UI;
 
@@ -29,7 +30,7 @@ public class TitlePanelManager
 
     public static void HandleStartClicked(object sender, EventArgs e)
     {
-        Core.ChangeScene(new GameScene());
+        Core.ChangeScene(new GameScene(LevelConfig.STARTING_LEVEL));
     }
 
     public static void HandleOptionsClicked(object sender, EventArgs e)

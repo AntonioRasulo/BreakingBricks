@@ -97,7 +97,7 @@ public class Paddle
         {
             PaddleState.FAST => new Vector2(direction * FAST_SPEED, 0f),
             PaddleState.SLOW => new Vector2(direction * SLOW_SPEED, 0f),
-            _ => new Vector2(direction * NORMAL_SPEED, 0f),
+            _ => new Vector2(direction * FAST_SPEED, 0f),
         };
 
         newPosition += _velocity;
@@ -156,6 +156,11 @@ public class Paddle
     public float getPaddleHeight()
     {
         return _paddleSprite.Height;
+    }
+
+    public PaddleState getState()
+    {
+        return _paddleState;
     }
 
     // private bool IsShootingPressed(KeyboardState currentKeyboardState, GamePadState currentGamePadstate)

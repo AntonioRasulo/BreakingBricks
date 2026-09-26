@@ -185,6 +185,9 @@
 /processorParam:TextureFormat=Color
 /build:images/bricks/bricks.png
 
+#begin images/bricks/BricksAtlas.xml
+/copy:images/bricks/BricksAtlas.xml
+
 #begin images/Flowers/CosmoOUTLINED.png
 /importer:TextureImporter
 /processor:TextureProcessor

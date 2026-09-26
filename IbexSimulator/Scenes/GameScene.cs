@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Media;
 using IbexGame.UI;
 using MonoGameGum;
 using IbexGame.GameObjects;
+using IbexGame.Config;
 
 namespace IbexGame.Scenes;
 
@@ -58,12 +59,15 @@ public class GameScene : Scene
 
     private Vector2 lastGenPlatformCoord;
 
-    private List<Flower> _flowers;
-    private int _numFlowersPicked = 0;
+    private List<Brick> _bricks;
 
-    public GameScene()
+    private int _currentLevelIndex;
+
+    private bool _wasCollidedInPrevFrame = false;
+
+    public GameScene(int startingLevel)
     {
-        Platform.restoreGravity();
+        _currentLevelIndex = startingLevel;
     }
 
     public override void Initialize()
@@ -139,9 +143,10 @@ public class GameScene : Scene
 
         Ball.LoadContent();
         Flower.LoadContent();
+        Brick.LoadContent();
 
         _balls = new List<Ball>();
-        _flowers = new List<Flower>();
+        _bricks = new List<Brick>();
 
         float initialPlatformPosY = Core.GraphicsDevice.PresentationParameters.BackBufferHeight * 0.5f;
         float initialPlatformPosX = Core.GraphicsDevice.PresentationParameters.BackBufferWidth * 0.1f;
@@ -152,6 +157,10 @@ public class GameScene : Scene
         _platformRand = new Random();
 
         lastGenPlatformCoord = initialPlatformPos + new Vector2(400.0f, -250.0f);
+
+        LoadLevel(LevelRegistry.AllLevels[_currentLevelIndex]);
+
+//        _bricks.Add(new Brick(BrickColor.GREEN, BrickType.SMALL, NumCollisions.THREE, initialPlatformPos));
 
         _levelBackground = Core.Content.Load<Texture2D>("images/backgrounds/mountains/origbig");
 
@@ -198,39 +207,24 @@ public class GameScene : Scene
             ball.Update(gameTime);
         }
 
-        foreach(Flower flower in _flowers)
-        {
-            flower.Update(gameTime);
-        }
+        // foreach(Flower flower in _flowers)
+        // {
+        //     flower.Update(gameTime);
+        // }
 
         _balls.RemoveAll(ball => ball.toRemove);
 
         CollisionChecks();
 
-        _flowers.RemoveAll(flower => flower.toRemove);
+        // if(_wasCollidedInPrevFrame)
+        // {
+        //     _wasCollidedInPrevFrame = false;
+        // }
 
-        float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        _platformGeneratorTimer += delta;
+        _bricks.RemoveAll(brick => brick.IsToRemove());
 
-        if (_platformGeneratorTimer >= _timeToGenerateNewPlatform)
-        {
-            _platformGeneratorTimer = 0;
-            GenerateNewPlatform();
-        }
+        checkChangeScene();
 
-        _platformGravityTimer += delta;
-
-        if(_platformGravityTimer >= _timeToIncreasePlatformGravity)
-        {
-            _platformGravityTimer = 0;
-            Platform.platformGravity += 0.1f;
-            _timeToGenerateNewPlatform -= 0.2f;
-            if(_timeToGenerateNewPlatform <= 2)
-            {
-                _timeToGenerateNewPlatform = 2f;
-                //_goat.jumpStrength += 0.1f;
-            }
-        }
     }
 
     private void GenerateNewPlatform()
@@ -253,13 +247,6 @@ public class GameScene : Scene
 
         //_platforms.Add(new Platform(newPlatformPos));
 
-        flowerType type = Flower.getRandomType();
-        if(type != flowerType.NONE)
-        {
-            Flower flower = new Flower(type);
-            flower.position = newPlatformPos - new Vector2(0.0f, flower.getBounds().Height);
-            _flowers.Add(flower);
-        }
     }
 
     private void TogglePause()
@@ -289,50 +276,34 @@ public class GameScene : Scene
     {
         Rectangle paddleBounds = _paddle.getBounds();
 
-        /*Balls - paddle collision*/
         foreach(Ball ball in _balls)
         {
             Circle ballBounds = ball.GetBounds();
 
-            if (areIntersecting(ballBounds, paddleBounds))
+            /*Balls - paddle collision*/
+            if(ball.getCollideWithPaddle() == false)
             {
-                int[] distances =
+                if (areIntersecting(ballBounds, paddleBounds))
                 {
-                        Math.Abs(ballBounds.Top - paddleBounds.Bottom), // From bottom
-                        Math.Abs(ballBounds.Bottom -  paddleBounds.Top), // From top
-                        Math.Abs(ballBounds.Right - paddleBounds.Left), // From Left
-                        Math.Abs(ballBounds.Left - paddleBounds.Right), // From right
-                };
-                Console.WriteLine("Printing distances");
-                string text = "index: " + 0 + " value " + distances[0];
-                Console.WriteLine(text);
-                int indexMin = 0;
-                int min = distances[0];
-                for (int i = 1; i < distances.Length; i++)
-                {
-                    text = "index: " + i + " value " + distances[i];
-                    Console.WriteLine(text);
-                    if (distances[i] < min)
-                    {
-                        min = distances[i];
-                        indexMin = i;
-                    }
+                    ball.CalculateBallBounce(paddleBounds, true, _paddle.getState());
+                    ball.setCollideWithPaddle(true);
                 }
+            }
+            else
+            {
+                ball.setCollideWithPaddle(false);
+            }
 
-                switch (indexMin)
+            /*Balls - Bricks collision*/
+            foreach(Brick brick in _bricks)
+            {
+                Rectangle brickBounds = brick.GetBounds();
+
+                if(!brick.IsToRemove() && areIntersecting(ballBounds, brickBounds))
                 {
-                    case 0:
-                        ball.Bounce(Vector2.UnitY);
-                        break;
-                    case 1:
-                        ball.Bounce(-Vector2.UnitY);
-                        break;
-                    case 2:
-                        ball.Bounce(-Vector2.UnitX);
-                        break;
-                    case 3:
-                        ball.Bounce(Vector2.UnitX);
-                        break;
+                    ball.CalculateBallBounce(brickBounds);
+                    brick.IsHit();
+                    break;
                 }
             }
         }
@@ -413,9 +384,9 @@ public class GameScene : Scene
             ball.Draw();
         }
 
-        foreach(Flower flower in _flowers)
+        foreach(Brick brick in _bricks)
         {
-            flower.Draw();
+            brick.Draw();
         }
 
         _paddle.Draw();
@@ -452,6 +423,61 @@ public class GameScene : Scene
         double cornerDistanceSquare = Math.Pow(distanceX-halfRectWidth, 2) + Math.Pow(distanceY-halfRectHeight, 2);
 
         return cornerDistanceSquare <= Math.Pow(circle.Radius, 2);
+    }
+
+    private void LoadLevel(LevelConfig config)
+    {
+//        _balls.Clear();
+        _bricks.Clear();
+
+        foreach(var row in config.Bricks)
+        {
+            foreach(var brickSpawn in row)
+            {
+                _bricks.Add(new Brick(brickSpawn.Color, brickSpawn.Type, NumCollisions.THREE, brickSpawn.Position));
+            }
+        }
+
+        // List<Texture2D> clouds = new List<Texture2D>();
+
+        // foreach(string backgroundStr in config.backgroundStr)
+        // {
+        //     clouds.Add(Content.Load<Texture2D>(backgroundStr));
+        // }
+
+        // _levelBackground = new Background(clouds);
+
+    }
+
+    private void checkChangeScene()
+    {
+        if(_bricks.Count == 0)
+        {
+            _score -= _ui.getTimer();
+            if(_score < 0)
+                _score = 0;
+            //_score += SCORE_LEVEL;
+            _ui.UpdateScoreText(_score);
+            _currentLevelIndex++;
+            if(_currentLevelIndex >= LevelRegistry.AllLevels.Count)
+            {
+                Core.ChangeScene(new GameOver(_score));
+            }
+            else
+            {
+                _ui.resetTimer();
+                LoadLevel(LevelRegistry.AllLevels[_currentLevelIndex]);
+            }
+        }
+        // else if(_character.isAlive() == false)
+        // {
+        //     _score -= _ui.getTimer();
+        //     if(_score < 0)
+        //         _score = 0;
+        //     _ui.UpdateScoreText(_score);
+        //     Core.ChangeScene(new GameOver(_score));
+        //     PlayerStats.SaveGame(PlayerStatsManager.currentStats);
+        // }
     }
 
 }
