@@ -2,7 +2,6 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using IbexGame.GameObjects;
 using MonoGameLibrary;
-using System;
 
 namespace IbexGame.Config;
 
@@ -35,8 +34,12 @@ public static class LevelRegistry
         {
             Bricks = new List<List<BrickConfig>>
             {
-                generateRow(screenWidth * 0.25f, screenWidth * 0.05f, 11, screenHeight * 0.2f, BrickType.BIG, BrickColor.GREEN),
-                generateRow(screenWidth * 0.25f, screenWidth * 0.05f, 11, screenHeight * 0.25f, BrickType.BIG, BrickColor.RED),
+                generateRow(screenWidth * 0.3f, screenWidth * 0.05f, 9, screenHeight * 0.2f, BrickType.BIG, BrickColor.GREEN),
+                generateRow(screenWidth * 0.3f, screenWidth * 0.05f, 9, screenHeight * 0.25f, BrickType.BIG, BrickColor.RED),
+                generateRow(screenWidth * 0.3f, screenWidth * 0.05f, 9, screenHeight * 0.3f, BrickType.BIG, BrickColor.GRAY),
+                generateRow(screenWidth * 0.3f, screenWidth * 0.05f, 9, screenHeight * 0.35f, BrickType.BIG, BrickColor.ORANGE),
+                generateRow(screenWidth * 0.3f, screenWidth * 0.05f, 9, screenHeight * 0.4f, BrickType.BIG, BrickColor.VIOLET),
+                generateRow(screenWidth * 0.3f, screenWidth * 0.05f, 9, screenHeight * 0.45f, BrickType.BIG, BrickColor.YELLOW)
             },
         }
     };
