@@ -1,7 +1,6 @@
 using IbexGame.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using MonoGameLibrary;
 using MonoGameLibrary.Graphics;
 
@@ -63,7 +62,7 @@ public class Paddle
 
         _position = new Vector2(
             windowWidth * 0.5f,
-            windowHeight * 0.9f);
+            windowHeight * 0.975f);
 
         xSizeScale = SizeScale.BIG;
 
@@ -162,15 +161,6 @@ public class Paddle
     {
         return _paddleState;
     }
-
-    // private bool IsShootingPressed(KeyboardState currentKeyboardState, GamePadState currentGamePadstate)
-    // {
-    //     bool isButtonPressedKeyBoard = currentKeyboardState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space);
-    //     bool isButtonPressedGamePad = currentGamePadstate.IsButtonDown(Buttons.A) && previousGamePadState.IsButtonUp(Buttons.A);
-    //     bool isButtonPressed = isButtonPressedKeyBoard || isButtonPressedGamePad;
-
-    //     return isButtonPressed;
-    // }
 
     // public bool _detachBall()
     // {

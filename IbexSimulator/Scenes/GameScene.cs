@@ -49,12 +49,6 @@ public class GameScene : Scene
     private Texture2D _levelBackground;
     private List<Ball> _balls;
 
-    private float _timeToGenerateNewPlatform = 4.5f; // Generate a new platform every 4 seconds
-    private float _platformGeneratorTimer = 0.0f;
-
-    private float _timeToIncreasePlatformGravity = 10.0f; // Every 10 seconds increase platform gravity
-    private float _platformGravityTimer = 0.0f;
-
     private Random _platformRand;
 
     private Vector2 lastGenPlatformCoord;
@@ -62,8 +56,6 @@ public class GameScene : Scene
     private List<Brick> _bricks;
 
     private int _currentLevelIndex;
-
-    private bool _wasCollidedInPrevFrame = false;
 
     public GameScene(int startingLevel)
     {
@@ -160,8 +152,6 @@ public class GameScene : Scene
 
         LoadLevel(LevelRegistry.AllLevels[_currentLevelIndex]);
 
-//        _bricks.Add(new Brick(BrickColor.GREEN, BrickType.SMALL, NumCollisions.THREE, initialPlatformPos));
-
         _levelBackground = Core.Content.Load<Texture2D>("images/backgrounds/mountains/origbig");
 
         // Load the font
@@ -207,45 +197,13 @@ public class GameScene : Scene
             ball.Update(gameTime);
         }
 
-        // foreach(Flower flower in _flowers)
-        // {
-        //     flower.Update(gameTime);
-        // }
-
         _balls.RemoveAll(ball => ball.toRemove);
 
         CollisionChecks();
 
-        // if(_wasCollidedInPrevFrame)
-        // {
-        //     _wasCollidedInPrevFrame = false;
-        // }
-
         _bricks.RemoveAll(brick => brick.IsToRemove());
 
         checkChangeScene();
-
-    }
-
-    private void GenerateNewPlatform()
-    {
-        float lowerBoundX = lastGenPlatformCoord.X - Core.GraphicsDevice.PresentationParameters.BackBufferWidth* 0.3f;
-
-        float upperBoundX = lastGenPlatformCoord.X + Core.GraphicsDevice.PresentationParameters.BackBufferWidth* 0.3f;
-
-        int randomX = _platformRand.Next((int)lowerBoundX, (int)upperBoundX);
-
-        int platformSize = 23*4;
-
-        while((randomX > Core.GraphicsDevice.PresentationParameters.BackBufferWidth - platformSize) ||  (randomX < platformSize))
-        {
-            randomX = _platformRand.Next((int)lowerBoundX, (int)upperBoundX);
-        }
-
-        Vector2 newPlatformPos = new Vector2(randomX, 0);
-        lastGenPlatformCoord = newPlatformPos;
-
-        //_platforms.Add(new Platform(newPlatformPos));
 
     }
 
@@ -281,17 +239,14 @@ public class GameScene : Scene
             Circle ballBounds = ball.GetBounds();
 
             /*Balls - paddle collision*/
-            if(ball.getCollideWithPaddle() == false)
+            bool collision = false;
+            PartCollided sideColl = PartCollided.NONE;
+            (collision, sideColl) = areIntersecting(ballBounds, paddleBounds);
+
+            if (collision)
             {
-                if (areIntersecting(ballBounds, paddleBounds))
-                {
-                    ball.CalculateBallBounce(paddleBounds, true, _paddle.getState());
-                    ball.setCollideWithPaddle(true);
-                }
-            }
-            else
-            {
-                ball.setCollideWithPaddle(false);
+                ball.CalculateBallBounce(paddleBounds, true);
+
             }
 
             /*Balls - Bricks collision*/
@@ -299,11 +254,18 @@ public class GameScene : Scene
             {
                 Rectangle brickBounds = brick.GetBounds();
 
-                if(!brick.IsToRemove() && areIntersecting(ballBounds, brickBounds))
+                if(!brick.IsToRemove())
                 {
-                    ball.CalculateBallBounce(brickBounds);
-                    brick.IsHit();
-                    break;
+                    collision = false;
+                    sideColl = PartCollided.NONE;
+                    (collision, sideColl) = areIntersecting(ballBounds, brickBounds);
+
+                    if (collision)
+                    {
+                        ball.CalculateBallBounce(brickBounds);
+                        brick.IsHit();
+                        break;
+                    }
                 }
             }
         }
@@ -319,9 +281,7 @@ public class GameScene : Scene
             }
             else if (ballBounds.Bottom > _roomBounds.Bottom)
             {
-                //ball.Bounce(-Vector2.UnitY);
                 ball.toRemove = true;
-                //Core.ChangeScene(new GameOver());
             }
 
             if (ballBounds.Left < _roomBounds.Left)
@@ -341,23 +301,6 @@ public class GameScene : Scene
             Core.ChangeScene(new GameOver(_score));
         }
 
-    }
-
-    private bool checkSetIntersection(float l1, float r1, float l2, float r2)
-    {
-        if(l1 >= l2 && r1 <= r2)
-        {
-            return true;
-        }
-        if(l1 <= l2 && r1 >= l2)
-        {
-            return true;
-        }
-        if(l1 <= r2 && r2 <= r1)
-        {
-            return true;
-        }
-        return false;
     }
 
     public override void Draw(GameTime gameTime)
@@ -400,7 +343,7 @@ public class GameScene : Scene
         base.Draw(gameTime);
     }
 
-    private bool areIntersecting(Circle circle, Rectangle rectangle)
+    public static (bool, PartCollided) areIntersecting(Circle circle, Rectangle rectangle)
     {
         int distanceX = Math.Abs(circle.X - rectangle.Center.X);
         int distanceY = Math.Abs(circle.Y - rectangle.Center.Y);
@@ -411,18 +354,16 @@ public class GameScene : Scene
         if((distanceX > (halfRectWidth + circle.Radius)) ||
            (distanceY > (halfRectHeight + circle.Radius)))
         {
-            return false;
+            return (false, PartCollided.NONE);
         }
 
-        if(distanceX <= halfRectWidth ||
-           distanceY <= halfRectHeight)
-        {
-            return true;
-        }
+        if(distanceX <= halfRectWidth) return  (true, PartCollided.SIDEX);
+
+        if(distanceY <= halfRectHeight) return (true, PartCollided.SIDEY);
 
         double cornerDistanceSquare = Math.Pow(distanceX-halfRectWidth, 2) + Math.Pow(distanceY-halfRectHeight, 2);
 
-        return cornerDistanceSquare <= Math.Pow(circle.Radius, 2);
+        return (cornerDistanceSquare <= Math.Pow(circle.Radius, 2), PartCollided.ANGLE);
     }
 
     private void LoadLevel(LevelConfig config)
@@ -469,15 +410,6 @@ public class GameScene : Scene
                 LoadLevel(LevelRegistry.AllLevels[_currentLevelIndex]);
             }
         }
-        // else if(_character.isAlive() == false)
-        // {
-        //     _score -= _ui.getTimer();
-        //     if(_score < 0)
-        //         _score = 0;
-        //     _ui.UpdateScoreText(_score);
-        //     Core.ChangeScene(new GameOver(_score));
-        //     PlayerStats.SaveGame(PlayerStatsManager.currentStats);
-        // }
     }
 
 }
