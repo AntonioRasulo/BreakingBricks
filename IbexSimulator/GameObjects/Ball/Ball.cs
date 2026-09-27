@@ -1,3 +1,4 @@
+using IbexGame.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGameLibrary;
@@ -38,7 +39,7 @@ public class Ball
 
     private AttachedStatus _attachStatus;
 
-    public Ball(Vector2 paddlePosition, float paddleHeight, float dirX)
+    public Ball(Vector2 paddlePosition, float paddleHeight, float dirX, AttachedStatus attachStatus)
     {
         _ballSprite = new Sprite(_whiteTexture)
         {
@@ -60,6 +61,8 @@ public class Ball
         _velocity = direction * _movementSpeed;
 
         toRemove = false;
+
+        _attachStatus = attachStatus;
 
     }
 
@@ -105,20 +108,28 @@ public class Ball
         _whiteTexture = Core.Content.Load<Texture2D>("images/Ball/ball_white_shaded_outline");
     }
 
-    public void Update(GameTime gameTime)
+    public void Update(GameTime gameTime, float paddleVelocity)
     {
-        // switch (_attachStatus)
-        // {
-        //     case AttachedStatus.ATTACHED:
-        //     break;
-        //     case AttachedStatus.FREE:
-        //     break;
-        // }
         if(_attachStatus == AttachedStatus.ATTACHED)
         {
-            
+            _position += new Vector2(paddleVelocity, 0f);
+
+            if(Moving.IsShootingPressed())
+            {
+                float directionX = (float)Moving.IsMoving();
+                if(directionX != 0.0f)
+                {
+                    _velocity = new Vector2(directionX, -1) * _movementSpeed;
+                }
+                _attachStatus = AttachedStatus.FREE;
+            }
         }
-        _position += _velocity;
+
+        if(_attachStatus == AttachedStatus.FREE)
+        {
+            _position += _velocity;
+        }
+
     }
 
     public void Draw()
@@ -279,6 +290,11 @@ public class Ball
         double cos = vector1.X * vector2.X + vector1.Y * vector2.Y;
 
         return Math.Atan2(sin, cos) * (180 / Math.PI);
+    }
+
+    public AttachedStatus getAttachedStatus()
+    {
+        return _attachStatus;
     }
 
 }

@@ -90,16 +90,6 @@ public class Paddle
     {
 
         float direction = (float)Moving.IsMoving();
-        Vector2 newPosition = _position;
-
-        _velocity = _paddleState switch
-        {
-            PaddleState.FAST => new Vector2(direction * FAST_SPEED, 0f),
-            PaddleState.SLOW => new Vector2(direction * SLOW_SPEED, 0f),
-            _ => new Vector2(direction * FAST_SPEED, 0f),
-        };
-
-        newPosition += _velocity;
 
         // Create a bounding rectangle for the screen.
         Rectangle screenBounds = new(
@@ -111,17 +101,24 @@ public class Paddle
 
         Rectangle paddleBounds = getBounds();
 
-        if(paddleBounds.Left < screenBounds.Left)
+        if(paddleBounds.Left <= screenBounds.Left && direction < 0)
         {
-            newPosition.X = _paddleSprite.Width * 0.5f;
+            direction = 0.0f;
         }
 
-        if(paddleBounds.Right > screenBounds.Right)
+        if(paddleBounds.Right >= screenBounds.Right && direction > 0)
         {
-            newPosition.X = screenBounds.Right - _paddleSprite.Width * 0.5f;
+            direction = 0.0f;
         }
 
-        _position = newPosition;
+        _velocity = _paddleState switch
+        {
+            PaddleState.FAST => new Vector2(direction * FAST_SPEED, 0f),
+            PaddleState.SLOW => new Vector2(direction * SLOW_SPEED, 0f),
+            _ => new Vector2(direction * FAST_SPEED, 0f),
+        };
+
+        _position += _velocity;
     }
 
     public void Draw()
@@ -162,9 +159,9 @@ public class Paddle
         return _paddleState;
     }
 
-    // public bool _detachBall()
-    // {
-    //     return !_attachBall;
-    // }
+    public float getVelocity()
+    {
+        return _velocity.X;
+    }
 
 }

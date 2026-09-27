@@ -12,27 +12,27 @@ public enum MovingDir
 
 public class Moving
 {
+    private static KeyboardState currentKeyboardState;
+    private static GamePadState currentGamePadState;
     private static KeyboardState previousKeyboardState;
     private static GamePadState previousGamePadState;
     private const float THUMBSTICK_DEADZONE = 0.2f;
 
     public static MovingDir IsMoving()
     {
-        KeyboardState currentKeyboardState = Keyboard.GetState();
-        GamePadState currentGamepadState = GamePad.GetState(PlayerIndex.One);
 
         bool IsMovingLeft = currentKeyboardState.IsKeyDown(Keys.A) ||
                              currentKeyboardState.IsKeyDown(Keys.Left) ||
-                             currentGamepadState.DPad.Left == ButtonState.Pressed ||
-                             currentGamepadState.ThumbSticks.Left.X < -THUMBSTICK_DEADZONE;
+                             currentGamePadState.DPad.Left == ButtonState.Pressed ||
+                             currentGamePadState.ThumbSticks.Left.X < -THUMBSTICK_DEADZONE;
 
         if (IsMovingLeft)
             return MovingDir.LEFT;
 
         bool IsMovingRight = currentKeyboardState.IsKeyDown(Keys.D) ||
                               currentKeyboardState.IsKeyDown(Keys.Right) ||
-                              currentGamepadState.DPad.Right == ButtonState.Pressed ||
-                              currentGamepadState.ThumbSticks.Left.X > THUMBSTICK_DEADZONE;
+                              currentGamePadState.DPad.Right == ButtonState.Pressed ||
+                              currentGamePadState.ThumbSticks.Left.X > THUMBSTICK_DEADZONE;
 
         if (IsMovingRight)
             return MovingDir.RIGHT;
@@ -40,23 +40,24 @@ public class Moving
         return MovingDir.IDLE;
     }
 
-    public static void Update(GameTime gameTime)
+    public static void readInput()
     {
-        KeyboardState currentKeyboardState = Keyboard.GetState();
-        GamePadState currentGamepadState = GamePad.GetState(PlayerIndex.One);
+        currentKeyboardState = Keyboard.GetState();
+        currentGamePadState = GamePad.GetState(PlayerIndex.One);
+    }
 
+    public static void updatePrevInputState()
+    {
         // Update keyboard and gamepad state
         previousKeyboardState = currentKeyboardState;
-        previousGamePadState = currentGamepadState;
+        previousGamePadState = currentGamePadState;
     }
 
     public static bool IsShootingPressed()
     {
-        KeyboardState currentKeyboardState = Keyboard.GetState();
-        GamePadState currentGamepadState = GamePad.GetState(PlayerIndex.One);
 
         bool isButtonPressedKeyBoard = currentKeyboardState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space);
-        bool isButtonPressedGamePad = currentGamepadState.IsButtonDown(Buttons.A) && previousGamePadState.IsButtonUp(Buttons.A);
+        bool isButtonPressedGamePad = currentGamePadState.IsButtonDown(Buttons.A) && previousGamePadState.IsButtonUp(Buttons.A);
         bool isButtonPressed = isButtonPressedKeyBoard || isButtonPressedGamePad;
 
         return isButtonPressed;

@@ -12,6 +12,7 @@ using IbexGame.UI;
 using MonoGameGum;
 using IbexGame.GameObjects;
 using IbexGame.Config;
+using IbexGame.Utility;
 
 namespace IbexGame.Scenes;
 
@@ -144,7 +145,7 @@ public class GameScene : Scene
         float initialPlatformPosX = Core.GraphicsDevice.PresentationParameters.BackBufferWidth * 0.1f;
         Vector2 initialPlatformPos = new Vector2(initialPlatformPosX, initialPlatformPosY);
 
-        _balls.Add(new Ball(_paddle.getPosition(), _paddle.getPaddleHeight(), _paddle.getDirection()));
+        _balls.Add(new Ball(_paddle.getPosition(), _paddle.getPaddleHeight(), _paddle.getDirection(), AttachedStatus.ATTACHED));
 
         _platformRand = new Random();
 
@@ -164,6 +165,8 @@ public class GameScene : Scene
 
     public override void Update(GameTime gameTime)
     {
+        Moving.readInput();
+
         // Update the grayscale effect if it was changed
         _grayscaleEffect.Update();
 
@@ -194,14 +197,15 @@ public class GameScene : Scene
 
         foreach(Ball ball in _balls)
         {
-            ball.Update(gameTime);
+            ball.Update(gameTime, _paddle.getVelocity());
         }
-
-        _balls.RemoveAll(ball => ball.toRemove);
 
         CollisionChecks();
 
         _bricks.RemoveAll(brick => brick.IsToRemove());
+        _balls.RemoveAll(ball => ball.toRemove);
+
+        Moving.updatePrevInputState();
 
         checkChangeScene();
 
@@ -236,35 +240,38 @@ public class GameScene : Scene
 
         foreach(Ball ball in _balls)
         {
-            Circle ballBounds = ball.GetBounds();
-
-            /*Balls - paddle collision*/
-            bool collision = false;
-            PartCollided sideColl = PartCollided.NONE;
-            (collision, sideColl) = areIntersecting(ballBounds, paddleBounds);
-
-            if (collision)
+            if(ball.getAttachedStatus() == AttachedStatus.FREE)
             {
-                ball.CalculateBallBounce(paddleBounds, true);
+                Circle ballBounds = ball.GetBounds();
 
-            }
+                /*Balls - paddle collision*/
+                bool collision = false;
+                PartCollided sideColl = PartCollided.NONE;
+                (collision, sideColl) = areIntersecting(ballBounds, paddleBounds);
 
-            /*Balls - Bricks collision*/
-            foreach(Brick brick in _bricks)
-            {
-                Rectangle brickBounds = brick.GetBounds();
-
-                if(!brick.IsToRemove())
+                if(collision)
                 {
-                    collision = false;
-                    sideColl = PartCollided.NONE;
-                    (collision, sideColl) = areIntersecting(ballBounds, brickBounds);
+                    ball.CalculateBallBounce(paddleBounds, true);
 
-                    if (collision)
+                }
+
+                /*Balls - Bricks collision*/
+                foreach(Brick brick in _bricks)
+                {
+                    Rectangle brickBounds = brick.GetBounds();
+
+                    if(!brick.IsToRemove())
                     {
-                        ball.CalculateBallBounce(brickBounds);
-                        brick.IsHit();
-                        break;
+                        collision = false;
+                        sideColl = PartCollided.NONE;
+                        (collision, sideColl) = areIntersecting(ballBounds, brickBounds);
+
+                        if (collision)
+                        {
+                            ball.CalculateBallBounce(brickBounds);
+                            brick.IsHit();
+                            break;
+                        }
                     }
                 }
             }
@@ -273,32 +280,28 @@ public class GameScene : Scene
         /*Balls - walls collision*/
         foreach(Ball ball in _balls)
         {
-            Circle ballBounds = ball.GetBounds();
-
-            if (ballBounds.Top < _roomBounds.Top)
+            if(ball.getAttachedStatus() == AttachedStatus.FREE)
             {
-                ball.Bounce(Vector2.UnitY);
-            }
-            else if (ballBounds.Bottom > _roomBounds.Bottom)
-            {
-                ball.toRemove = true;
-            }
+                Circle ballBounds = ball.GetBounds();
 
-            if (ballBounds.Left < _roomBounds.Left)
-            {
-                ball.Bounce(Vector2.UnitX);
-            }
-            else if (ballBounds.Right > _roomBounds.Right)
-            {
-                ball.Bounce(-Vector2.UnitX);
-            }
-        }
+                if (ballBounds.Top < _roomBounds.Top)
+                {
+                    ball.Bounce(Vector2.UnitY);
+                }
+                else if (ballBounds.Bottom > _roomBounds.Bottom)
+                {
+                    ball.toRemove = true;
+                }
 
-        _balls.RemoveAll(ball => ball.toRemove);
-
-        if(_balls.Count == 0)
-        {
-            Core.ChangeScene(new GameOver(_score));
+                if (ballBounds.Left < _roomBounds.Left)
+                {
+                    ball.Bounce(Vector2.UnitX);
+                }
+                else if (ballBounds.Right > _roomBounds.Right)
+                {
+                    ball.Bounce(-Vector2.UnitX);
+                }
+            }
         }
 
     }
@@ -409,6 +412,11 @@ public class GameScene : Scene
                 _ui.resetTimer();
                 LoadLevel(LevelRegistry.AllLevels[_currentLevelIndex]);
             }
+        }
+
+        if(_balls.Count == 0)
+        {
+            Core.ChangeScene(new GameOver(_score));
         }
     }
 

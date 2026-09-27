@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Media;
 using MonoGameGum;
 using IbexGame.UI;
 using IbexGame.GameObjects;
+using IbexGame.Utility;
 
 namespace IbexGame.Scenes;
 
@@ -84,11 +85,13 @@ public class TitleScene : Scene
     public override void Update(GameTime gameTime)
     {
         GumService.Default.Update(gameTime);
+        Moving.readInput();
 
         _3dMaterial.Update();
 
         float spinAmount = -150;
         _3dMaterial.SetParameter("SpinAmount", spinAmount);
+        Moving.updatePrevInputState();
     }
 
     public override void Draw(GameTime gameTime)
