@@ -227,7 +227,13 @@ public class Ball
 
         Vector2 normal = new Vector2(normalX, normalY);
 
-        if (isPaddle == true && insidePaddle == false)
+        if(normalX != 0 && normalY != 0 && isPaddle == false)
+        {
+            _velocity.X = Math.Abs(_velocity.X) * normal.X / Math.Abs(normal.X);
+            _velocity.Y = Math.Abs(_velocity.Y) * normal.Y / Math.Abs(normal.Y);
+            calculateNewPosition();
+        }
+        else if (isPaddle == true && insidePaddle == false)
         {
             float paddleSize = paddleBounds.Width; //204 when normal
             float paddleX = paddleBounds.X + paddleBounds.Width * 0.5f;
