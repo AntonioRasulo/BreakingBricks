@@ -10,5 +10,5 @@
         "request": "launch",
         "projectPath": "${workspaceFolder}/BrickBreak.csproj"
       }
-    ],
+    ]
   }

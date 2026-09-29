@@ -94,6 +94,7 @@ public class GameScene : Scene
 
         // Create the game scene ui instance.
         _ui = new GameSceneUI();
+        _ui.UpdateLivesText(_paddle.getLives());
 
         // Subscribe to the events from the game scene ui.
         _ui.ResumeButtonClick += OnResumeButtonClicked;
@@ -207,6 +208,11 @@ public class GameScene : Scene
 
         Moving.updatePrevInputState();
 
+        if((_balls.Count == 0) && (_paddle.isDead() == false))
+        {
+            _balls.Add(new Ball(_paddle.getPosition(), _paddle.getBounds().Height, _paddle.getDirection(), AttachedStatus.ATTACHED));
+        }
+
         checkChangeScene();
 
     }
@@ -252,7 +258,6 @@ public class GameScene : Scene
                 if(collision)
                 {
                     ball.CalculateBallBounce(paddleBounds, true);
-
                 }
 
                 /*Balls - Bricks collision*/
@@ -291,6 +296,10 @@ public class GameScene : Scene
                 else if (ballBounds.Bottom > _roomBounds.Bottom)
                 {
                     ball.toRemove = true;
+                    int paddleLives = _paddle.getLives();
+                    paddleLives--;
+                    _paddle.setLives(paddleLives);
+                    _ui.UpdateLivesText(paddleLives);
                 }
 
                 if (ballBounds.Left < _roomBounds.Left)
@@ -336,6 +345,14 @@ public class GameScene : Scene
         }
 
         _paddle.Draw();
+
+        // Draw lives sprite
+        int roomWidth = Core.GraphicsDevice.PresentationParameters.BackBufferWidth;
+        float distanceFromTopWall = 23.0f;
+        float xOffset = 35.0f;
+        Vector2 livesSpritePosition = new Vector2(roomWidth * 0.5f - xOffset, distanceFromTopWall);
+
+        Core.SpriteBatch.Draw(Ball.whiteTexture, livesSpritePosition, Ball.whiteTexture.Bounds, Color.White, 0.0f, Vector2.Zero, new Vector2(0.05f, 0.05f), SpriteEffects.None, 0.0f);
 
         // Always end the sprite batch when finished.
         Core.SpriteBatch.End();
@@ -414,7 +431,7 @@ public class GameScene : Scene
             }
         }
 
-        if(_balls.Count == 0)
+        if(_paddle.isDead())
         {
             Core.ChangeScene(new GameOver(_score));
         }

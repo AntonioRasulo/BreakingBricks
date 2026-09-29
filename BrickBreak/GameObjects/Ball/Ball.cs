@@ -31,7 +31,7 @@ public class Ball
 
     private float _movementSpeed = 6.0f;
 
-    private static Texture2D _whiteTexture;
+    public static Texture2D whiteTexture;
 
     private Vector2 SCALE = new Vector2(0.04f, 0.04f);
 
@@ -41,7 +41,7 @@ public class Ball
 
     public Ball(Vector2 paddlePosition, float paddleHeight, float dirX, AttachedStatus attachStatus)
     {
-        _ballSprite = new Sprite(_whiteTexture)
+        _ballSprite = new Sprite(whiteTexture)
         {
             Scale = SCALE
         };
@@ -105,7 +105,7 @@ public class Ball
 
     public static void LoadContent()
     {
-        _whiteTexture = Core.Content.Load<Texture2D>("images/Ball/ball_white_shaded_outline");
+        whiteTexture = Core.Content.Load<Texture2D>("images/Ball/ball_white_shaded_outline");
     }
 
     public void Update(GameTime gameTime, float paddleVelocity)

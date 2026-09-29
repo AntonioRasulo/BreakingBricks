@@ -8,7 +8,7 @@ namespace BrickBreak;
 
 public class Game1 : Core
 {
-    public Game1() : base("GameName", 1280, 720, false)
+    public Game1() : base("BrickBreak", 1280, 720, false)
     {
     }
 

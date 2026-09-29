@@ -164,4 +164,19 @@ public class Paddle
         return _velocity.X;
     }
 
+    public int getLives()
+    {
+        return _lives;
+    }
+
+    public void setLives(int lives)
+    {
+        _lives = lives;
+    }
+
+    public bool isDead()
+    {
+        return (_lives == 0);
+    }
+
 }

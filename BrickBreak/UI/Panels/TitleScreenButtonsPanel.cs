@@ -8,7 +8,7 @@ namespace BrickBreak.UI;
 public class TitleScreenButtonsPanel : PangPanel
 {
 
-    private const string TITLE_TEXT = "    Ibex\nSimulator";
+    private const string TITLE_TEXT = "Brick\nBreak";
 
     // The position to draw the monogame text at.
     private Vector2 _titleTextPos;

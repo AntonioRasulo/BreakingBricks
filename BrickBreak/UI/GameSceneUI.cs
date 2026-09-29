@@ -25,6 +25,9 @@ public class GameSceneUI : ContainerRuntime
     // The string format to use when updating the text for the lives display.
     private static readonly string s_flowerFormat = "{0:D5}"; 
 
+    // The string format to use when updating the text for the lives display.
+    private static readonly string s_livesFormat = "X{0:D2}";
+
     // The sound effect to play for auditory feedback of the user interface.
     //private SoundEffect _uiSoundEffect;
 
@@ -78,6 +81,9 @@ public class GameSceneUI : ContainerRuntime
     private Sprite _flowerSprite;
     private Vector2 _flowerSpritePosition;
 
+    // The text runtime used to display the lives on the game screen.
+    private TextRuntime _livesText;
+
     public GameSceneUI()
     {
         // The game scene UI inherits from ContainerRuntime, so we set its
@@ -114,6 +120,27 @@ public class GameSceneUI : ContainerRuntime
         // and add it as a child to this container
         _gameOverPanel = CreateGameOverPanel(atlas);
         AddChild(_gameOverPanel.Visual);
+
+        // Create the text that will display the lives and add it as
+        // a child to this container.
+        _livesText = CreateLivesText();
+        AddChild(_livesText);
+    }
+
+    private TextRuntime CreateLivesText()
+    {
+        var screenWidth = GumService.Default.CanvasWidth;
+        TextRuntime text = new TextRuntime();
+        text.Anchor(Gum.Wireframe.Anchor.Top);
+        text.WidthUnits = DimensionUnitType.RelativeToChildren;
+        text.Y = 5.0f;
+        text.X = 10.0f;
+        text.UseCustomFont = true;
+        text.CustomFontFile = @"fonts/04b_30.fnt";
+        text.FontScale = 0.25f;
+        text.Text = string.Format(s_livesFormat, 0);
+
+        return text;
     }
 
     private TextRuntime CreateScoreText()
@@ -440,6 +467,18 @@ public class GameSceneUI : ContainerRuntime
             Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
             _flowerSprite.Draw(Core.SpriteBatch, _flowerSpritePosition);
             Core.SpriteBatch.End();
+        }
+    }
+
+    /// <summary>
+    /// Updates the text on the lives display.
+    /// </summary>
+    /// <param name="lives">Number of lives of the character.</param>
+    public void UpdateLivesText(int lives)
+    {
+        if(_pausePanel.IsVisible == false)
+        {
+            _livesText.Text = string.Format(s_livesFormat, lives);
         }
     }
 
