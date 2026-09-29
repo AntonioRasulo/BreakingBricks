@@ -1,8 +1,8 @@
 MonoGameLibrary/bin/*
 MonoGameLibrary/obj/*
-IbexSimulator/bin/*
-IbexSimulator/obj/*
-IbexSimulator/Content/obj/*
-IbexSimulator/Content/bin/*
+BrickBreak/bin/*
+BrickBreak/obj/*
+BrickBreak/Content/obj/*
+BrickBreak/Content/bin/*
 MonoGameLibrary/SharedContent/obj/*
 MonoGameLibrary/SharedContent/bin/*
