@@ -50,6 +50,8 @@ public class Brick
 
     private Vector2 SCALE = new Vector2(2.0f, 2.0f);
 
+    private int _brickScore = 5;
+
     public Brick(BrickColor color, BrickType type, NumCollisions lives, Vector2 position)
     {
         _color = color;
@@ -126,13 +128,19 @@ public class Brick
         return (_numLives == 0);
     }
 
-    public void IsHit()
+    public int IsHit()
     {
+        int returnScore = _brickScore;
         _numLives--;
         if(_numLives != 0)
         {
             _brickSprite.Region = _brickTextures[_color][_type][(NumCollisions)_numLives];
         }
+        else
+        {
+            _brickScore *= 2;
+        }
+        return returnScore;
     }
 
     public Rectangle GetBounds()

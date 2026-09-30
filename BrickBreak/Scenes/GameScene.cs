@@ -58,6 +58,9 @@ public class GameScene : Scene
 
     private int _currentLevelIndex;
 
+    private const int SCORE_LEVEL = 100;
+    private const int LOST_BALL_SCORE = 20;
+
     public GameScene(int startingLevel)
     {
         _currentLevelIndex = startingLevel;
@@ -274,7 +277,8 @@ public class GameScene : Scene
                         if (collision)
                         {
                             ball.CalculateBallBounce(brickBounds);
-                            brick.IsHit();
+                            _score += brick.IsHit();
+                            _ui.UpdateScoreText(_score);
                             break;
                         }
                     }
@@ -300,6 +304,10 @@ public class GameScene : Scene
                     paddleLives--;
                     _paddle.setLives(paddleLives);
                     _ui.UpdateLivesText(paddleLives);
+                    _score -= LOST_BALL_SCORE;
+                    if(_score < 0)
+                        _score = 0;
+                    _ui.UpdateScoreText(_score);
                 }
 
                 if (ballBounds.Left < _roomBounds.Left)
@@ -417,7 +425,7 @@ public class GameScene : Scene
             _score -= _ui.getTimer();
             if(_score < 0)
                 _score = 0;
-            //_score += SCORE_LEVEL;
+            _score += SCORE_LEVEL;
             _ui.UpdateScoreText(_score);
             _currentLevelIndex++;
             if(_currentLevelIndex >= LevelRegistry.AllLevels.Count)

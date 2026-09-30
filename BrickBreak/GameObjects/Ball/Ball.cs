@@ -117,10 +117,13 @@ public class Ball
             if(Moving.IsShootingPressed())
             {
                 float directionX = (float)Moving.IsMoving();
-                if(directionX != 0.0f)
+                if(directionX == 0.0f)
                 {
-                    _velocity = new Vector2(directionX, -1) * _movementSpeed;
+                    directionX = 1.0f;
                 }
+
+                _velocity = new Vector2(directionX, -1) * _movementSpeed;
+
                 _attachStatus = AttachedStatus.FREE;
             }
         }
