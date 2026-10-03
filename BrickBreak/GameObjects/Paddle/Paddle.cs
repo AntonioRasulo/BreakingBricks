@@ -1,3 +1,4 @@
+using System;
 using BrickBreak.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -121,8 +122,10 @@ public class Paddle
         _position += _velocity;
     }
 
-    public void Draw()
+    public void Draw(Action configureSpriteBatch)
     {
+        configureSpriteBatch();
+
         _paddleSprite.Draw(Core.SpriteBatch, _position);
     }
 

@@ -9,6 +9,10 @@
 
 Texture2D SpriteTexture;
 
+// A value between 0 and 1 that controls the intensity of the grayscale effect.
+// 0 = full color, 1 = full grayscale.
+float Saturation = 1.0;
+
 sampler2D SpriteTextureSampler = sampler_state
 {
 	Texture = <SpriteTexture>;
@@ -36,26 +40,51 @@ struct VertexShaderOutput
 	float2 TextureCoordinates : TEXCOORD0;
 };
 
+float4 Grayscale(float4 color)
+{
+    // Calculate the grayscale value based on human perception of colors
+    float grayscale = dot(color.rgb, float3(0.3, 0.59, 0.11));
+
+    // create a grayscale color vector (same value for R, G, and B)
+    float3 grayscaleColor = float3(grayscale, grayscale, grayscale);
+
+    // Linear interpolation between the grayscale color and the original color's
+    // rgb values based on the saturation parameter.
+    float3 finalColor = lerp(grayscale, color.rgb, Saturation);
+
+    // Return the final color with the original alpha value
+    return float4(finalColor, color.a);
+}
+
+float4 SwapColors(float4 color)
+{
+    // produce the key location
+    //  note the x-offset by half a texel solves rounding errors.
+    float2 keyUv = float2(color.r , 0);
+    
+    // read the swap color value
+    float4 swappedColor = tex2D(ColorMapSampler, keyUv) * color.a;
+    
+    // ignore the swap if the map does not have a value
+    bool hasSwapColor = swappedColor.a > 0;
+    if (!hasSwapColor)
+    {
+        return color;
+    }
+    
+    // return the result color
+    return lerp(swappedColor, color, OriginalAmount);
+}
+
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
     // read the original color value
-	float4 originalColor = tex2D(SpriteTextureSampler,input.TextureCoordinates) * input.Color;
+    float4 originalColor = tex2D(SpriteTextureSampler,input.TextureCoordinates);
 
-    // produce the key location
-    float2 keyUv = float2(originalColor.r, 0);
-
-    // read the swap color value
-    float4 swappedColor = tex2D(ColorMapSampler, keyUv) * originalColor.a;
-
-	// ignore the swap if the map does not have a value  
-    bool hasSwapColor = swappedColor.a > 0;  
-    if (!hasSwapColor)  
-    {  
-        return originalColor;  
-    }
-
-    // return the result color
-    return lerp(swappedColor, originalColor, OriginalAmount);
+    float4 swapped = SwapColors(originalColor);
+    float4 saturated = Grayscale(swapped);
+    
+    return saturated;
 }
 
 technique SpriteDrawing

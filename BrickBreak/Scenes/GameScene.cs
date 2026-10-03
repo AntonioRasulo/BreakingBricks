@@ -38,9 +38,6 @@ public class GameScene : Scene
 
     private GameState _state;
 
-    // The grayscale shader effect.
-    private Material _grayscaleEffect;
-
     // The color swap shader material.  
     private Material _colorSwapMaterial;
 
@@ -65,6 +62,11 @@ public class GameScene : Scene
     private const int LOST_BALL_SCORE = 20;
 
     private Texture2D _colorMap;
+
+    private RedColorMap _bricksColorMap;
+
+    private TimeSpan _lastBallPaddleCollTime;
+    private double _blinkTimerPaddleMs = 0;
 
     public GameScene(int startingLevel)
     {
@@ -167,24 +169,26 @@ public class GameScene : Scene
         // Load the font
         _font = Content.Load<SpriteFont>("fonts/mountain_and_nature/Mountain_and_Nature_small");
 
-        // Load the grayscale effect.
-        _grayscaleEffect = Content.WatchMaterial("effects/grayscaleEffect");
-        _grayscaleEffect.IsDebugVisible = false;
-
         // Load the colorSwap material
         _colorSwapMaterial = Content.WatchMaterial("effects/colorSwapEffect");
         _colorSwapMaterial.IsDebugVisible = true;
 
         _colorMap = Core.Content.Load<Texture2D>("images/effects/color-map-1");
-        _colorSwapMaterial.SetParameter("ColorMap", _colorMap);
+        _bricksColorMap = new RedColorMap();
+
+        _bricksColorMap.SetColorsByRedValue(new Dictionary<int, Color>
+        {
+            // main color
+            [97] = Color.Blue,
+            [64] = Color.DarkBlue
+        }, false);
+
+        _colorSwapMaterial.SetParameter("ColorMap", _bricksColorMap.ColorMap);
     }
 
     public override void Update(GameTime gameTime)
     {
         Moving.readInput();
-
-        // Update the grayscale effect if it was changed
-        _grayscaleEffect.Update();
 
         // Update the colorSwap material if it was changed
         _colorSwapMaterial.Update();
@@ -198,6 +202,10 @@ public class GameScene : Scene
             // gradually decrease the saturation to create the fading grayscale.
             _saturation = Math.Max(0.0f, _saturation - FADE_SPEED);
 
+        }
+        else
+        {
+            _saturation = 1.0f;
         }
 
         // If the pause button is pressed, toggle the pause state. TODO implement GameController
@@ -219,7 +227,7 @@ public class GameScene : Scene
             ball.Update(gameTime, _paddle.getVelocity());
         }
 
-        CollisionChecks();
+        CollisionChecks(gameTime);
 
         _bricks.RemoveAll(brick => brick.IsToRemove());
         _balls.RemoveAll(ball => ball.toRemove);
@@ -258,7 +266,7 @@ public class GameScene : Scene
         }
     }
 
-    private void CollisionChecks()
+    private void CollisionChecks(GameTime gameTime)
     {
         Rectangle paddleBounds = _paddle.getBounds();
 
@@ -276,6 +284,7 @@ public class GameScene : Scene
                 if(collision)
                 {
                     ball.CalculateBallBounce(paddleBounds, true);
+                    _lastBallPaddleCollTime = gameTime.TotalGameTime;
                 }
 
                 /*Balls - Bricks collision*/
@@ -342,19 +351,22 @@ public class GameScene : Scene
     {
         Core.GraphicsDevice.Clear(Color.White);
 
+        _colorSwapMaterial.SetParameter("Saturation", _saturation);
+
+        SpriteSortMode spriteSortMode = SpriteSortMode.Immediate;
+
         if (_state != GameState.Playing)
         {
-            // We are in a game over state, so apply the saturation parameter.
-            _grayscaleEffect.SetParameter("Saturation", _saturation);
+            spriteSortMode = SpriteSortMode.Deferred;
+        }
+        // Begin the sprite batch to prepare for rendering.
+        Core.SpriteBatch.Begin( samplerState: SamplerState.PointClamp,
+                                sortMode: spriteSortMode,
+                                effect: _colorSwapMaterial.Effect);
 
-            // And begin the sprite batch using the grayscale effect.
-            Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: _grayscaleEffect.Effect);
-        }
-        else
-        {
-            // Begin the sprite batch to prepare for rendering.
-            Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: _colorSwapMaterial.Effect);
-        }
+        // Update the colorMap for the slime  
+        _colorSwapMaterial.SetParameter("ColorMap", _colorMap);
+
         Core.SpriteBatch.Draw(_levelBackground, Core.GraphicsDevice.PresentationParameters.Bounds, Color.White);
 
         foreach(Ball ball in _balls)
@@ -367,8 +379,6 @@ public class GameScene : Scene
             brick.Draw();
         }
 
-        _paddle.Draw();
-
         // Draw lives sprite
         int roomWidth = Core.GraphicsDevice.PresentationParameters.BackBufferWidth;
         float distanceFromTopWall = 23.0f;
@@ -376,6 +386,32 @@ public class GameScene : Scene
         Vector2 livesSpritePosition = new Vector2(roomWidth * 0.5f - xOffset, distanceFromTopWall);
 
         Core.SpriteBatch.Draw(Ball.whiteTexture, livesSpritePosition, Ball.whiteTexture.Bounds, Color.White, 0.0f, Vector2.Zero, new Vector2(0.05f, 0.05f), SpriteEffects.None, 0.0f);
+
+        _paddle.Draw
+        (
+            () =>
+            {
+                const int flashTimeMs = 1000;
+                const int blinkIntervalMs = 100;
+                double delta = gameTime.ElapsedGameTime.TotalMilliseconds;
+                Texture2D map = _colorMap;
+                var elapsedMs = gameTime.TotalGameTime.TotalMilliseconds - _lastBallPaddleCollTime.TotalMilliseconds;
+                var intervalsAgo = (int)(elapsedMs / flashTimeMs);
+
+                if(elapsedMs < flashTimeMs)
+                {
+                    _blinkTimerPaddleMs += delta;
+
+                    if(_blinkTimerPaddleMs >= blinkIntervalMs)
+                    {
+                        map = _bricksColorMap.ColorMap;
+                        _blinkTimerPaddleMs = 0;
+                    }
+                }
+
+                _colorSwapMaterial.SetParameter("ColorMap", map);
+            }
+        );
 
         // Always end the sprite batch when finished.
         Core.SpriteBatch.End();
