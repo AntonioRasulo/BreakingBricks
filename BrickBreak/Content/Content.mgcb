@@ -73,6 +73,12 @@
 /processorParam:Quality=Best
 /build:audio/Sound effects/GoatSound/goat5.mp3
 
+#begin effects/colorSwapEffect.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:effects/colorSwapEffect.fx
+
 #begin effects/grayscaleEffect.fx
 /importer:EffectImporter
 /processor:EffectProcessor
@@ -187,6 +193,18 @@
 
 #begin images/bricks/BricksAtlas.xml
 /copy:images/bricks/BricksAtlas.xml
+
+#begin images/effects/color-map-1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,255,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/effects/color-map-1.png
 
 #begin images/Flowers/CosmoOUTLINED.png
 /importer:TextureImporter

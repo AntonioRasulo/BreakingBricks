@@ -41,6 +41,9 @@ public class GameScene : Scene
     // The grayscale shader effect.
     private Material _grayscaleEffect;
 
+    // The color swap shader material.  
+    private Material _colorSwapMaterial;
+
     // The amount of saturation to provide the grayscale shader effect.
     private float _saturation = 1.0f;
 
@@ -60,6 +63,8 @@ public class GameScene : Scene
 
     private const int SCORE_LEVEL = 100;
     private const int LOST_BALL_SCORE = 20;
+
+    private Texture2D _colorMap;
 
     public GameScene(int startingLevel)
     {
@@ -165,6 +170,13 @@ public class GameScene : Scene
         // Load the grayscale effect.
         _grayscaleEffect = Content.WatchMaterial("effects/grayscaleEffect");
         _grayscaleEffect.IsDebugVisible = false;
+
+        // Load the colorSwap material
+        _colorSwapMaterial = Content.WatchMaterial("effects/colorSwapEffect");
+        _colorSwapMaterial.IsDebugVisible = true;
+
+        _colorMap = Core.Content.Load<Texture2D>("images/effects/color-map-1");
+        _colorSwapMaterial.SetParameter("ColorMap", _colorMap);
     }
 
     public override void Update(GameTime gameTime)
@@ -173,6 +185,9 @@ public class GameScene : Scene
 
         // Update the grayscale effect if it was changed
         _grayscaleEffect.Update();
+
+        // Update the colorSwap material if it was changed
+        _colorSwapMaterial.Update();
 
         // Ensure the UI is always updated.
         _ui.Update(gameTime);
@@ -338,7 +353,7 @@ public class GameScene : Scene
         else
         {
             // Begin the sprite batch to prepare for rendering.
-            Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: _colorSwapMaterial.Effect);
         }
         Core.SpriteBatch.Draw(_levelBackground, Core.GraphicsDevice.PresentationParameters.Bounds, Color.White);
 
