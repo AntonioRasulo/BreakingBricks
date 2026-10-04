@@ -461,6 +461,21 @@
 #begin images/platforms/terrain_atlas.xml
 /copy:images/platforms/terrain_atlas.xml
 
+#begin images/Tilemap/border_tilemap.xml
+/copy:images/Tilemap/border_tilemap.xml
+
+#begin images/Tilemap/Futiristic-Tileset.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/Tilemap/Futiristic-Tileset.png
+
 #begin images/Title/dall-schaf-brown-m.png
 /importer:TextureImporter
 /processor:TextureProcessor

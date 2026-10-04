@@ -70,6 +70,9 @@ public class GameScene : Scene
 
     private SpriteCamera3d _camera;
 
+    // Defines the tilemap to draw.
+    private Tilemap _tilemap;
+
     public GameScene(int startingLevel)
     {
         _currentLevelIndex = startingLevel;
@@ -85,6 +88,7 @@ public class GameScene : Scene
         Core.ExitOnEscape = false;
 
         _roomBounds = Core.GraphicsDevice.PresentationParameters.Bounds;
+        _roomBounds.Inflate(-_tilemap.TileWidth, -_tilemap.TileHeight);
 
         // Create any UI elements from the root element created in previous
         // scenes.
@@ -143,6 +147,10 @@ public class GameScene : Scene
         {
             System.Diagnostics.Debug.WriteLine($"Failed to load theme music: {ex.Message}");
         }
+
+        // Create the tilemap from the XML configuration file.
+        _tilemap = Tilemap.FromFile(Content, "images/Tilemap/border_tilemap.xml");
+        _tilemap.Scale = new Vector2(4.0f, 4.0f);
 
         _paddle = new Paddle();
         _paddle.LoadContent();
@@ -368,7 +376,7 @@ public class GameScene : Scene
 
     public override void Draw(GameTime gameTime)
     {
-        Core.GraphicsDevice.Clear(Color.Green);
+        Core.GraphicsDevice.Clear(Color.Blue);
 
         _colorSwapMaterial.SetParameter("Saturation", _saturation);
 
@@ -381,7 +389,9 @@ public class GameScene : Scene
 
         // Draw the background and apply no effects to it
         Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
-        Core.SpriteBatch.Draw(_levelBackground, Core.GraphicsDevice.PresentationParameters.Bounds, Color.White);
+        //Core.SpriteBatch.Draw(_levelBackground, Core.GraphicsDevice.PresentationParameters.Bounds, Color.White);
+        // Draw the tilemap
+        _tilemap.Draw(Core.SpriteBatch);
         Core.SpriteBatch.End();
 
         // Begin the sprite batch to prepare for rendering.
