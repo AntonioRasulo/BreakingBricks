@@ -217,8 +217,12 @@ public class Tilemap
                         // Get the tileset index for this location
                         int tilesetIndex = int.Parse(columns[column]);
 
-                        // Add that region to the tilemap at the row and column location
-                        tilemap.SetTile(column, row, tilesetIndex);
+                        if(tilesetIndex != -1)
+                        {
+                            // Add that region to the tilemap at the row and column location
+                            tilemap.SetTile(column, row, tilesetIndex);
+                        }
+
                     }
                 }
 

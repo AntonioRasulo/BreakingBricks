@@ -68,6 +68,8 @@ public class GameScene : Scene
     private TimeSpan _lastBallPaddleCollTime;
     private double _blinkTimerPaddleMs = 0;
 
+    private SpriteCamera3d _camera;
+
     public GameScene(int startingLevel)
     {
         _currentLevelIndex = startingLevel;
@@ -184,6 +186,9 @@ public class GameScene : Scene
         }, false);
 
         _colorSwapMaterial.SetParameter("ColorMap", _bricksColorMap.ColorMap);
+        _camera = new SpriteCamera3d();
+        _colorSwapMaterial.SetParameter("MatrixTransform", _camera.CalculateMatrixTransform());
+        _colorSwapMaterial.SetParameter("ScreenSize", new Vector2(Core.GraphicsDevice.Viewport.Width, Core.GraphicsDevice.Viewport.Height));
     }
 
     public override void Update(GameTime gameTime)
@@ -192,6 +197,20 @@ public class GameScene : Scene
 
         // Update the colorSwap material if it was changed
         _colorSwapMaterial.Update();
+
+        float paddlePosX = _paddle.getPosition().X;
+        if(paddlePosX > Core.GraphicsDevice.Viewport.Width * 0.75f)
+        {
+            paddlePosX = Core.GraphicsDevice.Viewport.Width * 0.75f;
+        }
+        else if(paddlePosX < Core.GraphicsDevice.Viewport.Width * 0.25f)
+        {
+            paddlePosX = Core.GraphicsDevice.Viewport.Width * 0.25f;
+        }
+
+        var spinAmount = paddlePosX / (float)Core.GraphicsDevice.Viewport.Width;
+        spinAmount = MathHelper.SmoothStep(-.1f, .1f, spinAmount);
+        _colorSwapMaterial.SetParameter("SpinAmount", spinAmount);
 
         // Ensure the UI is always updated.
         _ui.Update(gameTime);
@@ -349,7 +368,7 @@ public class GameScene : Scene
 
     public override void Draw(GameTime gameTime)
     {
-        Core.GraphicsDevice.Clear(Color.White);
+        Core.GraphicsDevice.Clear(Color.Green);
 
         _colorSwapMaterial.SetParameter("Saturation", _saturation);
 
@@ -359,6 +378,12 @@ public class GameScene : Scene
         {
             spriteSortMode = SpriteSortMode.Deferred;
         }
+
+        // Draw the background and apply no effects to it
+        Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
+        Core.SpriteBatch.Draw(_levelBackground, Core.GraphicsDevice.PresentationParameters.Bounds, Color.White);
+        Core.SpriteBatch.End();
+
         // Begin the sprite batch to prepare for rendering.
         Core.SpriteBatch.Begin( samplerState: SamplerState.PointClamp,
                                 sortMode: spriteSortMode,
@@ -366,8 +391,6 @@ public class GameScene : Scene
 
         // Update the colorMap for the slime  
         _colorSwapMaterial.SetParameter("ColorMap", _colorMap);
-
-        Core.SpriteBatch.Draw(_levelBackground, Core.GraphicsDevice.PresentationParameters.Bounds, Color.White);
 
         foreach(Ball ball in _balls)
         {
