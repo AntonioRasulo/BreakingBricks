@@ -54,7 +54,9 @@ public class Paddle
 
     private PaddleState _paddleState;
 
-    public Paddle()
+    private Rectangle _roomBounds;
+
+    public Paddle(Rectangle roomBounds)
     {
         _paddleState = PaddleState.NORMAL;
 
@@ -69,6 +71,7 @@ public class Paddle
 
         SCALE = new(xSizeScale, 0.15f);
 
+        _roomBounds = roomBounds;
     }
 
     public void LoadContent()
@@ -92,22 +95,14 @@ public class Paddle
 
         float direction = (float)Moving.IsMoving();
 
-        // Create a bounding rectangle for the screen.
-        Rectangle screenBounds = new(
-            0,
-            0,
-            Core.GraphicsDevice.PresentationParameters.BackBufferWidth,
-            Core.GraphicsDevice.PresentationParameters.BackBufferHeight
-        );
-
         Rectangle paddleBounds = getBounds();
 
-        if(paddleBounds.Left <= screenBounds.Left && direction < 0)
+        if(paddleBounds.Left <= _roomBounds.Left && direction < 0)
         {
             direction = 0.0f;
         }
 
-        if(paddleBounds.Right >= screenBounds.Right && direction > 0)
+        if(paddleBounds.Right >= _roomBounds.Right && direction > 0)
         {
             direction = 0.0f;
         }

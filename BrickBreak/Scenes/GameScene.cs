@@ -13,6 +13,7 @@ using MonoGameGum;
 using BrickBreak.GameObjects;
 using BrickBreak.Config;
 using BrickBreak.Utility;
+using BrickBreak.Backgrounds;
 
 namespace BrickBreak.Scenes;
 
@@ -47,7 +48,7 @@ public class GameScene : Scene
     // The speed of the fade to grayscale effect.
     private const float FADE_SPEED = 0.02f;
 
-    private Texture2D _levelBackground;
+    private Background _levelBackground;
     private List<Ball> _balls;
 
     private Random _platformRand;
@@ -87,8 +88,17 @@ public class GameScene : Scene
         // the escape key will be used to return back to the title screen
         Core.ExitOnEscape = false;
 
-        _roomBounds = Core.GraphicsDevice.PresentationParameters.Bounds;
-        _roomBounds.Inflate(-_tilemap.TileWidth, -_tilemap.TileHeight);
+        // Rectangle screenBounds = Core.GraphicsDevice.PresentationParameters.Bounds;
+
+        // // //_roomBounds = Core.GraphicsDevice.PresentationParameters.Bounds;
+        // _roomBounds = new Rectangle(
+        //     (int)_tilemap.TileWidth,
+        //     (int)_tilemap.TileHeight,
+        //     screenBounds.Width - (int)_tilemap.TileWidth * 2,
+        //     screenBounds.Height - (int)_tilemap.TileHeight * 2
+        // );
+
+        // _roomBounds.Inflate(-_tilemap.TileWidth, -_tilemap.TileHeight);
 
         // Create any UI elements from the root element created in previous
         // scenes.
@@ -152,7 +162,20 @@ public class GameScene : Scene
         _tilemap = Tilemap.FromFile(Content, "images/Tilemap/border_tilemap.xml");
         _tilemap.Scale = new Vector2(4.0f, 4.0f);
 
-        _paddle = new Paddle();
+        Rectangle screenBounds = Core.GraphicsDevice.PresentationParameters.Bounds;
+
+        //_roomBounds = Core.GraphicsDevice.PresentationParameters.Bounds;
+        _roomBounds = new Rectangle(
+            (int)(_tilemap.TileWidth * 1f),
+            (int)(_tilemap.TileHeight * 1f),
+            screenBounds.Width - (int)(_tilemap.TileWidth * 2f),
+            //screenBounds.Height - (int)(_tilemap.TileHeight * 0.5f)
+            screenBounds.Height
+        );
+
+        //_roomBounds.Inflate(-_tilemap.TileWidth, -_tilemap.TileHeight);
+
+        _paddle = new Paddle(_roomBounds);
         _paddle.LoadContent();
 
         Ball.LoadContent();
@@ -173,8 +196,6 @@ public class GameScene : Scene
         lastGenPlatformCoord = initialPlatformPos + new Vector2(400.0f, -250.0f);
 
         LoadLevel(LevelRegistry.AllLevels[_currentLevelIndex]);
-
-        _levelBackground = Core.Content.Load<Texture2D>("images/backgrounds/mountains/origbig");
 
         // Load the font
         _font = Content.Load<SpriteFont>("fonts/mountain_and_nature/Mountain_and_Nature_small");
@@ -206,19 +227,19 @@ public class GameScene : Scene
         // Update the colorSwap material if it was changed
         _colorSwapMaterial.Update();
 
-        float paddlePosX = _paddle.getPosition().X;
-        if(paddlePosX > Core.GraphicsDevice.Viewport.Width * 0.75f)
-        {
-            paddlePosX = Core.GraphicsDevice.Viewport.Width * 0.75f;
-        }
-        else if(paddlePosX < Core.GraphicsDevice.Viewport.Width * 0.25f)
-        {
-            paddlePosX = Core.GraphicsDevice.Viewport.Width * 0.25f;
-        }
+        // float paddlePosX = _paddle.getPosition().X;
+        // if(paddlePosX > Core.GraphicsDevice.Viewport.Width * 0.75f)
+        // {
+        //     paddlePosX = Core.GraphicsDevice.Viewport.Width * 0.75f;
+        // }
+        // else if(paddlePosX < Core.GraphicsDevice.Viewport.Width * 0.25f)
+        // {
+        //     paddlePosX = Core.GraphicsDevice.Viewport.Width * 0.25f;
+        // }
 
-        var spinAmount = paddlePosX / (float)Core.GraphicsDevice.Viewport.Width;
-        spinAmount = MathHelper.SmoothStep(-.1f, .1f, spinAmount);
-        _colorSwapMaterial.SetParameter("SpinAmount", spinAmount);
+        // var spinAmount = paddlePosX / (float)Core.GraphicsDevice.Viewport.Width;
+        // spinAmount = MathHelper.SmoothStep(-.1f, .1f, spinAmount);
+        // _colorSwapMaterial.SetParameter("SpinAmount", spinAmount);
 
         // Ensure the UI is always updated.
         _ui.Update(gameTime);
@@ -267,6 +288,8 @@ public class GameScene : Scene
         }
 
         checkChangeScene();
+
+        _levelBackground.Update(gameTime);
 
     }
 
@@ -376,7 +399,7 @@ public class GameScene : Scene
 
     public override void Draw(GameTime gameTime)
     {
-        Core.GraphicsDevice.Clear(Color.Blue);
+        Core.GraphicsDevice.Clear(new Color(57, 120, 168));
 
         _colorSwapMaterial.SetParameter("Saturation", _saturation);
 
@@ -387,11 +410,15 @@ public class GameScene : Scene
             spriteSortMode = SpriteSortMode.Deferred;
         }
 
+        // Draw the background
+        _levelBackground.Draw();
+
         // Draw the background and apply no effects to it
         Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
         //Core.SpriteBatch.Draw(_levelBackground, Core.GraphicsDevice.PresentationParameters.Bounds, Color.White);
         // Draw the tilemap
-        _tilemap.Draw(Core.SpriteBatch);
+        //_tilemap.Draw(Core.SpriteBatch);
+        _tilemap.DrawBorder(Core.SpriteBatch);
         Core.SpriteBatch.End();
 
         // Begin the sprite batch to prepare for rendering.
@@ -491,14 +518,14 @@ public class GameScene : Scene
             }
         }
 
-        // List<Texture2D> clouds = new List<Texture2D>();
+        List<Texture2D> texturesBG = new List<Texture2D>();
 
-        // foreach(string backgroundStr in config.backgroundStr)
-        // {
-        //     clouds.Add(Content.Load<Texture2D>(backgroundStr));
-        // }
+        foreach(string backgroundStr in config.backgroundStr)
+        {
+            texturesBG.Add(Content.Load<Texture2D>(backgroundStr));
+        }
 
-        // _levelBackground = new Background(clouds);
+        _levelBackground = new Background(texturesBG, config.bgScrollSpeed);
 
     }
 

@@ -125,6 +125,24 @@ public class Tilemap
         }
     }
 
+    public void DrawBorder(SpriteBatch spriteBatch)
+    {
+        for (int i = 0; i < Count; i++)
+        {
+            int tilesetIndex = _tiles[i];
+            TextureRegion tile = _tileset.GetTile(tilesetIndex);
+
+            int x = i % Columns;
+            int y = i / Columns;
+
+            if((x> 0 && x<Columns-1) && (y>0 && y<Rows-1))
+                continue;
+
+            Vector2 position = new Vector2(x * TileWidth, y * TileHeight);
+            tile.Draw(spriteBatch, position, Color.White, 0.0f, Vector2.Zero, Scale, SpriteEffects.None, 1.0f);
+        }
+    }
+
 
     /// <summary>
     /// Creates a new tilemap based on a tilemap xml configuration file.

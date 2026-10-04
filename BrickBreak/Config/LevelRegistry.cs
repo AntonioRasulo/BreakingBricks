@@ -41,6 +41,18 @@ public static class LevelRegistry
                 generateRow(screenWidth * 0.3f, screenWidth * 0.05f, 9, screenHeight * 0.4f, BrickType.BIG, BrickColor.VIOLET),
                 generateRow(screenWidth * 0.3f, screenWidth * 0.05f, 9, screenHeight * 0.45f, BrickType.BIG, BrickColor.YELLOW)
             },
+            backgroundStr = new List<string>
+            {
+                "images/backgrounds/cityNight1/Buildings 1",
+                "images/backgrounds/cityNight1/Buildings 2",
+                "images/backgrounds/cityNight1/Buildings 3",
+                "images/backgrounds/cityNight1/Buildings 4",
+                "images/backgrounds/cityNight1/Lights",
+                "images/backgrounds/cityNight1/Shade 2",
+                "images/backgrounds/cityNight1/Shade 3",
+                "images/backgrounds/cityNight1/Sky"
+            },
+            bgScrollSpeed = 0.0f
         }
     };
 }

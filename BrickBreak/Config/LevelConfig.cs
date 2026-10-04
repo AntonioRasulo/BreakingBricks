@@ -8,7 +8,9 @@ public class LevelConfig
 {
     public List<List<BrickConfig>> Bricks{get; set;}
 
-    //public List<string> backgroundStr;
+    public List<string> backgroundStr;
+
+    public float bgScrollSpeed;
 
     //public List<EnemyConfig> Enemies{get; set;}
     // later: tilemap, time limit, etc.
