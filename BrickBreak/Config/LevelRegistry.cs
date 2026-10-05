@@ -34,23 +34,20 @@ public static class LevelRegistry
         {
             Bricks = new List<List<BrickConfig>>
             {
-                generateRow(screenWidth * 0.3f, screenWidth * 0.05f, 9, screenHeight * 0.2f, BrickType.BIG, BrickColor.GREEN),
+                //generateRow(screenWidth * 0.3f, screenWidth * 0.05f, 9, screenHeight * 0.2f, BrickType.BIG, BrickColor.GREEN),
                 generateRow(screenWidth * 0.3f, screenWidth * 0.05f, 9, screenHeight * 0.25f, BrickType.BIG, BrickColor.RED),
-                generateRow(screenWidth * 0.3f, screenWidth * 0.05f, 9, screenHeight * 0.3f, BrickType.BIG, BrickColor.GRAY),
+                //generateRow(screenWidth * 0.3f, screenWidth * 0.05f, 9, screenHeight * 0.3f, BrickType.BIG, BrickColor.GRAY),
                 generateRow(screenWidth * 0.3f, screenWidth * 0.05f, 9, screenHeight * 0.35f, BrickType.BIG, BrickColor.ORANGE),
-                generateRow(screenWidth * 0.3f, screenWidth * 0.05f, 9, screenHeight * 0.4f, BrickType.BIG, BrickColor.VIOLET),
+                //generateRow(screenWidth * 0.3f, screenWidth * 0.05f, 9, screenHeight * 0.4f, BrickType.BIG, BrickColor.VIOLET),
                 generateRow(screenWidth * 0.3f, screenWidth * 0.05f, 9, screenHeight * 0.45f, BrickType.BIG, BrickColor.YELLOW)
             },
             backgroundStr = new List<string>
             {
-                "images/backgrounds/cityNight1/Buildings 1",
-                "images/backgrounds/cityNight1/Buildings 2",
-                "images/backgrounds/cityNight1/Buildings 3",
-                "images/backgrounds/cityNight1/Buildings 4",
-                "images/backgrounds/cityNight1/Lights",
-                "images/backgrounds/cityNight1/Shade 2",
-                "images/backgrounds/cityNight1/Shade 3",
-                "images/backgrounds/cityNight1/Sky"
+                "images/backgrounds/bgNight1/1",
+                "images/backgrounds/bgNight1/2",
+                "images/backgrounds/bgNight1/3",
+                "images/backgrounds/bgNight1/4",
+                "images/backgrounds/bgNight1/5"
             },
             bgScrollSpeed = 0.0f
         }

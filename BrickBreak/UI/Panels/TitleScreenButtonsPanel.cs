@@ -57,7 +57,7 @@ public class TitleScreenButtonsPanel : PangPanel
         _panel.AddChild(_optionsButton);
 
         // Load the font for the title text.
-        _font5x = Core.Content.Load<SpriteFont>("fonts/mountain_and_nature/Mountain_and_Nature");
+        _font5x = Core.Content.Load<SpriteFont>("fonts/bricksFonts/bricks");
 
         // Set the position and origin for the Title text.
         Vector2 size = _font5x.MeasureString(TITLE_TEXT);

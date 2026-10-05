@@ -10,6 +10,8 @@ using MonoGameGum;
 using BrickBreak.UI;
 using BrickBreak.GameObjects;
 using BrickBreak.Utility;
+using BrickBreak.Backgrounds;
+using System.Collections.Generic;
 
 namespace BrickBreak.Scenes;
 
@@ -18,10 +20,7 @@ public class TitleScene : Scene
     // The font to use to render normal text.
     private SpriteFont _font;
 
-    private Texture2D _levelBackground;
-
-    private Texture2D _goatHead;
-    private Vector2 _goatHeadPosition;
+    private Background _levelBackground;
 
     private static bool _volumeInitialized = false;
 
@@ -63,14 +62,6 @@ public class TitleScene : Scene
             System.Diagnostics.Debug.WriteLine($"Failed to load theme music: {ex.Message}");
         }
 
-        _levelBackground = Core.Content.Load<Texture2D>("images/backgrounds/backgroundTitle/origbig");
-
-        _goatHead = Core.Content.Load<Texture2D>("images/Title/dall-schaf-brown-m");
-        _goatHeadPosition = new Vector2(
-            Core.GraphicsDevice.Viewport.Width * 0.23f + 30.0f,
-            Core.GraphicsDevice.Viewport.Height * 0.12f
-        );
-
         // Load the 3d effect 
         _3dMaterial = Core.SharedContent.WatchMaterial("effects/3dEffect");
         _3dMaterial.IsDebugVisible = false;
@@ -80,12 +71,25 @@ public class TitleScene : Scene
         _3dMaterial.SetParameter("ScreenSize", new Vector2(Core.GraphicsDevice.Viewport.Width, Core.GraphicsDevice.Viewport.Height));
 
         Goat.LoadSoundEffects();
+
+        List<Texture2D> texturesBG =
+        [
+            Content.Load<Texture2D>("images/backgrounds/backgroundTitle/1"),
+            Content.Load<Texture2D>("images/backgrounds/backgroundTitle/2"),
+            Content.Load<Texture2D>("images/backgrounds/backgroundTitle/3"),
+            Content.Load<Texture2D>("images/backgrounds/backgroundTitle/4"),
+            Content.Load<Texture2D>("images/backgrounds/backgroundTitle/5"),
+        ];
+
+        _levelBackground = new Background(texturesBG, 0.0f);
     }
 
     public override void Update(GameTime gameTime)
     {
         GumService.Default.Update(gameTime);
         Moving.readInput();
+
+        _levelBackground.Update(gameTime);
 
         _3dMaterial.Update();
 
@@ -99,19 +103,12 @@ public class TitleScene : Scene
         Core.GraphicsDevice.Clear(new Color(32, 40, 78, 255));
 
         // Draw the background
-        Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
-        Core.SpriteBatch.Draw(_levelBackground, Core.GraphicsDevice.PresentationParameters.Bounds, Color.White);
-        Core.SpriteBatch.End();
+        _levelBackground.Draw();
 
         // Begin the sprite batch to prepare for rendering.
          Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp,
                                  rasterizerState: RasterizerState.CullNone,
                                  effect: _3dMaterial.Effect);
-
-        if(TitlePanelManager.IsTitlePanelVisible())
-        {
-            Core.SpriteBatch.Draw(_goatHead, _goatHeadPosition, Color.White);
-        }
 
         TitlePanelManager.Draw();
 
