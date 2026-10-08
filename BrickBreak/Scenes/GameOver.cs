@@ -7,7 +7,6 @@ using MonoGameLibrary.Scenes;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
 using MonoGameLibrary.Graphics;
-using BrickBreak.GameObjects;
 
 namespace BrickBreak.Scenes;
 
@@ -82,13 +81,6 @@ public class GameOver : Scene
         _pressEnterPosition = new Vector2(640, 630);
         _pressEnterOrigin = size * 0.5f;
 
-        flowerType type = flowerType.NONE;
-        while(type == flowerType.NONE)
-        {
-            type = Flower.getRandomType();
-        }
-
-        _flowerSprite = Flower.GetSprite(type);
         _flowerSprite.Scale = new Vector2(4.0f, 4.0f);
 
         float flowerX = 980.0f;

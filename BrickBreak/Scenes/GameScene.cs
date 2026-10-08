@@ -48,7 +48,7 @@ public class GameScene : Scene
     // The speed of the fade to grayscale effect.
     private const float FADE_SPEED = 0.02f;
 
-    private Background _levelBackground;
+    private List<Background> _levelBackground;
     private List<Ball> _balls;
 
     private Random _platformRand;
@@ -164,22 +164,17 @@ public class GameScene : Scene
 
         Rectangle screenBounds = Core.GraphicsDevice.PresentationParameters.Bounds;
 
-        //_roomBounds = Core.GraphicsDevice.PresentationParameters.Bounds;
         _roomBounds = new Rectangle(
             (int)(_tilemap.TileWidth * 1f),
             (int)(_tilemap.TileHeight * 1f),
             screenBounds.Width - (int)(_tilemap.TileWidth * 2f),
-            //screenBounds.Height - (int)(_tilemap.TileHeight * 0.5f)
             screenBounds.Height
         );
-
-        //_roomBounds.Inflate(-_tilemap.TileWidth, -_tilemap.TileHeight);
 
         _paddle = new Paddle(_roomBounds);
         _paddle.LoadContent();
 
         Ball.LoadContent();
-        Flower.LoadContent();
         Brick.LoadContent();
 
         _balls = new List<Ball>();
@@ -289,7 +284,10 @@ public class GameScene : Scene
 
         checkChangeScene();
 
-        _levelBackground.Update(gameTime);
+        foreach(Background bg in _levelBackground)
+        {
+            bg.Update(gameTime);
+        }
 
     }
 
@@ -411,7 +409,10 @@ public class GameScene : Scene
         }
 
         // Draw the background
-        _levelBackground.Draw();
+        Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
+        foreach (var layer in _levelBackground)   // far layers first, near layers last
+            layer.Draw(Color.White * 0.5f);
+        Core.SpriteBatch.End();
 
         // Draw the background and apply no effects to it
         Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
@@ -520,12 +521,12 @@ public class GameScene : Scene
 
         List<Texture2D> texturesBG = new List<Texture2D>();
 
-        foreach(string backgroundStr in config.backgroundStr)
-        {
-            texturesBG.Add(Content.Load<Texture2D>(backgroundStr));
-        }
+        _levelBackground = [];
 
-        _levelBackground = new Background(texturesBG, config.bgScrollSpeed);
+        foreach(var bgStrSpeed in config.bgDict)
+        {
+            _levelBackground.Add(new(Content.Load<Texture2D>(bgStrSpeed.Key), bgStrSpeed.Value));
+        }
 
     }
 

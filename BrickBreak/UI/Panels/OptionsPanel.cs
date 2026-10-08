@@ -129,7 +129,7 @@ public class OptionsPanel: PangPanel
     {
         // Play the UI Sound effect so the player can hear the difference in audio.
         //Core.Audio.PlaySoundEffect(TitlePanelManager.uiSoundEffect);
-        Goat.playGoatSoundEffect();
+        //Goat.playGoatSoundEffect();
     }
 
     public new void SetIsVisible(bool isVisible)

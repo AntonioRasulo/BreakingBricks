@@ -1,91 +1,55 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGameLibrary;
-using System.Collections.Generic;
+using System;
 
 namespace BrickBreak.Backgrounds;
 
 public class Background
 {
-    // The textures used for the background pattern.
-    private List<Texture2D> _textures;
+    private readonly Texture2D _texture;
+    private readonly float _scrollSpeed;   // pixels/sec. Positive = scrolls left, negative = right
+    private float _offsetX;
 
-    private float _backgroundWidth;
-    private float _backgroundHeight; 
-
-    // The destination rectangle for the background pattern to fill.
-    private Rectangle _backgroundDestination;
-    private Rectangle _textureDestination;
-
-    // The offset to apply when drawing the background pattern so it appears to
-    // be scrolling.
-    private Vector2 _backgroundOffset;
-
-    // The speed that the background pattern scrolls.
-    private float _scrollSpeed;
-
-    public Background(List<Texture2D> texture, float scrollSpeed = 25.0f)
+    public Background(Texture2D texture, float scrollSpeed)
     {
-        _textures = texture;
-
-        _backgroundWidth = _textures[0].Width;
-        _backgroundHeight = _textures[0].Height;
-
-        // Set the background pattern destination rectangle to fill the entire
-        // screen background.
-        _backgroundDestination = Core.GraphicsDevice.PresentationParameters.Bounds;
-
-        float screenHeight = Core.GraphicsDevice.PresentationParameters.BackBufferHeight;
-
-        _textureDestination= new Rectangle(
-            0,
-            (int)(screenHeight - _backgroundHeight),  // Y position on screen
-            _backgroundDestination.Width,
-            (int)_backgroundHeight
-        );
-
+        _texture = texture;
         _scrollSpeed = scrollSpeed;
+    }
 
+    // Width of one tile after scaling the texture to the screen height.
+    private int GetTileWidth(int screenHeight)
+    {
+        float scale = (float)screenHeight / _texture.Height;
+        return Math.Max(1, (int)Math.Round(_texture.Width * scale));
     }
 
     public void Update(GameTime gameTime)
     {
-        // Update the offsets for the background pattern wrapping so that it
-        // scrolls down and to the right.
-        float offset = _scrollSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-        _backgroundOffset.X -= offset;
+        int tileWidth = GetTileWidth(Core.GraphicsDevice.Viewport.Height);
 
-        // Ensure that the offsets do not go beyond the texture bounds so it is
-        // a seamless wrap.
-        _backgroundOffset.X %= _backgroundWidth;
+        _offsetX += _scrollSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+        _offsetX %= tileWidth;
+        if (_offsetX < 0) _offsetX += tileWidth;
     }
 
-    public void Draw(Effect effect = null)
+    // Call between SpriteBatch.Begin/End.
+    public void Draw(Color? tint = null)
     {
+        Color color = tint ?? Color.White;
 
-        Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: effect);
-        Core.SpriteBatch.Draw(_textures[0], _backgroundDestination, _textures[0].Bounds, Color.White * 0.5f);
-        Core.SpriteBatch.End();
+        int screenWidth = Core.GraphicsDevice.Viewport.Width;
+        int screenHeight = Core.GraphicsDevice.Viewport.Height;
+        int tileWidth = GetTileWidth(screenHeight);
 
-        Rectangle source = new Rectangle(
-            (int)_backgroundOffset.X,
-            0,
-            _backgroundDestination.Width,
-            (int)_backgroundHeight
-        );
+        int startX = -(int)MathF.Floor(_offsetX);
 
-        SamplerState samplerStateBackground = new SamplerState();
-        samplerStateBackground.AddressU = TextureAddressMode.Wrap;
-        samplerStateBackground.AddressV = TextureAddressMode.Clamp;
-        samplerStateBackground.Filter = TextureFilter.Point;
-        Core.SpriteBatch.Begin(samplerState: samplerStateBackground);
-
-        for(int index = 1; index < _textures.Count; index++)
+        for (int x = startX; x < screenWidth; x += tileWidth)
         {
-            Core.SpriteBatch.Draw(_textures[index], _textureDestination, source, Color.White * 0.5f);
+            // Integer rectangles on exact tile boundaries avoid hairline seams.
+            var dest = new Rectangle(x, 0, tileWidth, screenHeight);
+            Core.SpriteBatch.Draw(_texture, dest, color);
         }
-
-        Core.SpriteBatch.End();
     }
-
 }

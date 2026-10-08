@@ -20,7 +20,7 @@ public class TitleScene : Scene
     // The font to use to render normal text.
     private SpriteFont _font;
 
-    private Background _levelBackground;
+    private List<Background> _levelBackground;
 
     private static bool _volumeInitialized = false;
 
@@ -70,18 +70,14 @@ public class TitleScene : Scene
         _3dMaterial.SetParameter("MatrixTransform", camera.CalculateMatrixTransform());
         _3dMaterial.SetParameter("ScreenSize", new Vector2(Core.GraphicsDevice.Viewport.Width, Core.GraphicsDevice.Viewport.Height));
 
-        Goat.LoadSoundEffects();
-
-        List<Texture2D> texturesBG =
-        [
-            Content.Load<Texture2D>("images/backgrounds/backgroundTitle/1"),
-            Content.Load<Texture2D>("images/backgrounds/backgroundTitle/2"),
-            Content.Load<Texture2D>("images/backgrounds/backgroundTitle/3"),
-            Content.Load<Texture2D>("images/backgrounds/backgroundTitle/4"),
-            Content.Load<Texture2D>("images/backgrounds/backgroundTitle/5"),
-        ];
-
-        _levelBackground = new Background(texturesBG, 0.0f);
+        _levelBackground = new List<Background>
+        {
+            new(Content.Load<Texture2D>("images/backgrounds/bgTitle2/1"), 5.0f),
+            new(Content.Load<Texture2D>("images/backgrounds/bgTitle2/2"), 0.0f),
+            new(Content.Load<Texture2D>("images/backgrounds/bgTitle2/3"), 0.0f),
+            new(Content.Load<Texture2D>("images/backgrounds/bgTitle2/4"), 0.0f),
+            new(Content.Load<Texture2D>("images/backgrounds/bgTitle2/5"), 0.0f)
+        };
     }
 
     public override void Update(GameTime gameTime)
@@ -89,7 +85,10 @@ public class TitleScene : Scene
         GumService.Default.Update(gameTime);
         Moving.readInput();
 
-        _levelBackground.Update(gameTime);
+        foreach(Background bg in _levelBackground)
+        {
+            bg.Update(gameTime);
+        }
 
         _3dMaterial.Update();
 
@@ -100,13 +99,14 @@ public class TitleScene : Scene
 
     public override void Draw(GameTime gameTime)
     {
-        Core.GraphicsDevice.Clear(new Color(32, 40, 78, 255));
-
         // Draw the background
-        _levelBackground.Draw();
+        Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
+        foreach (var layer in _levelBackground)   // far layers first, near layers last
+            layer.Draw(Color.White * 0.5f);
+        Core.SpriteBatch.End();
 
         // Begin the sprite batch to prepare for rendering.
-         Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp,
+        Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp,
                                  rasterizerState: RasterizerState.CullNone,
                                  effect: _3dMaterial.Effect);
 

@@ -2,14 +2,11 @@ using System;
 using Gum.DataTypes;
 using Gum.Managers;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using MonoGameGum;
 using Gum.Forms.Controls;
 using MonoGameGum.GueDeriving;
-using MonoGameLibrary;
 using MonoGameLibrary.Graphics;
-using BrickBreak.GameObjects;
 
 namespace BrickBreak.UI;
 
@@ -21,9 +18,6 @@ public class GameSceneUI : ContainerRuntime
 
     // The string format to use when updating the text for the time display.
     private static readonly string s_timeFormat = "TIME: {0:D3}";
-
-    // The string format to use when updating the text for the lives display.
-    private static readonly string s_flowerFormat = "{0:D5}"; 
 
     // The string format to use when updating the text for the lives display.
     private static readonly string s_livesFormat = "X{0:D2}";
@@ -53,12 +47,6 @@ public class GameSceneUI : ContainerRuntime
     // The text runtime used to display the timer on the game screen.
     private TextRuntime _timerText;
 
-    // The text runtime used to display the lives on the game screen.
-    //private TextRuntime _livesText;
-
-    // The text runtime used to display the flowers amount on the pause screen.
-    private TextRuntime _flowerText;
-
     // Number of seconds on the current level.
     private double _timer;
 
@@ -77,9 +65,6 @@ public class GameSceneUI : ContainerRuntime
     /// Event invoked when the Retry button on the Game Over panel is clicked.
     /// </summary>
     public event EventHandler RetryButtonClick;
-
-    private Sprite _flowerSprite;
-    private Vector2 _flowerSpritePosition;
 
     // The text runtime used to display the lives on the game screen.
     private TextRuntime _livesText;
@@ -226,24 +211,6 @@ public class GameSceneUI : ContainerRuntime
 
         panel.AddChild(_quitButton);
 
-        var screenWidth = GumService.Default.CanvasWidth;
-        _flowerText = new TextRuntime();
-        _flowerText.Anchor(Gum.Wireframe.Anchor.TopRight);
-        _flowerText.WidthUnits = DimensionUnitType.RelativeToChildren;
-        _flowerText.Y = 15.0f;
-        _flowerText.X = -10.0f;
-        _flowerText.UseCustomFont = true;
-        _flowerText.CustomFontFile = @"fonts/04b_30.fnt";
-        _flowerText.FontScale = 0.25f;
-        _flowerText.Text = string.Format(s_flowerFormat, 0);
-
-        panel.AddChild(_flowerText);
-
-        float flowerX = Core.GraphicsDevice.PresentationParameters.BackBufferWidth * 0.7f;
-        float flowerY = Core.GraphicsDevice.PresentationParameters.BackBufferHeight *0.37f;
-
-        _flowerSpritePosition = new Vector2(flowerX, flowerY);
-
         return panel;
     }
 
@@ -305,7 +272,7 @@ public class GameSceneUI : ContainerRuntime
     private void OnResumeButtonClicked(object sender, EventArgs args)
     {
         // Button was clicked, play the ui sound effect for auditory feedback.
-        Goat.playGoatSoundEffect();
+        //Goat.playGoatSoundEffect();
 
         // Since the resume button was clicked, we need to hide the pause panel.
         HidePausePanel();
@@ -320,7 +287,7 @@ public class GameSceneUI : ContainerRuntime
     private void OnRetryButtonClicked(object sender, EventArgs args)
     {
         // Button was clicked, play the ui sound effect for auditory feedback.
-        Goat.playGoatSoundEffect();
+        //Goat.playGoatSoundEffect();
 
         // Since the retry button was clicked, we need to hide the game over panel.
         HideGameOverPanel();
@@ -335,7 +302,7 @@ public class GameSceneUI : ContainerRuntime
     private void OnQuitButtonClicked(object sender, EventArgs args)
     {
         // Button was clicked, play the ui sound effect for auditory feedback.
-        Goat.playGoatSoundEffect();
+        //Goat.playGoatSoundEffect();
 
         // Both panels have a quit button, so hide both panels
         HidePausePanel();
@@ -370,11 +337,6 @@ public class GameSceneUI : ContainerRuntime
         }
     }
 
-    public void UpdateFlowerText(int numFlowers)
-    {
-        _flowerText.Text = string.Format(s_flowerFormat, numFlowers);
-    }
-
     /// <summary>
     /// Reset the timer.
     /// </summary>
@@ -393,15 +355,6 @@ public class GameSceneUI : ContainerRuntime
     /// </summary>
     public void ShowPausePanel()
     {
-        flowerType type = flowerType.NONE;
-        while(type == flowerType.NONE)
-        {
-            type = Flower.getRandomType();
-        }
-
-        _flowerSprite = Flower.GetSprite(type);
-        _flowerSprite.Scale = new Vector2(2.0f, 2.0f);
-
         _pausePanel.IsVisible = true;
 
         // Give the resume button focus for keyboard/gamepad input.
@@ -462,12 +415,6 @@ public class GameSceneUI : ContainerRuntime
     public void Draw()
     {
         GumService.Default.Draw();
-        if (_pausePanel.IsVisible)
-        {
-            Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
-            _flowerSprite.Draw(Core.SpriteBatch, _flowerSpritePosition);
-            Core.SpriteBatch.End();
-        }
     }
 
     /// <summary>

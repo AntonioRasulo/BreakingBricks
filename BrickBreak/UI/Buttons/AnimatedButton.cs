@@ -134,7 +134,7 @@ public class AnimatedButton : Button
         // Add event handler for mouse hover focus.
         buttonVisual.RollOn += HandleRollOn;
 
-        Click += PlayGoatSound;
+        //Click += PlayGoatSound;
 
         //GotFocus += PlaySound;
     }
@@ -147,10 +147,10 @@ public class AnimatedButton : Button
         IsFocused = true;
     }
 
-    protected void PlayGoatSound(object sender, EventArgs e)
-    {
-        Goat.playGoatSoundEffect();
-    }
+    // protected void PlayGoatSound(object sender, EventArgs e)
+    // {
+    //     Goat.playGoatSoundEffect();
+    // }
 
     protected void PlaySound(object sender, EventArgs e)
     {
