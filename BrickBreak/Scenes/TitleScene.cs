@@ -8,7 +8,6 @@ using MonoGameLibrary.Scenes;
 using Microsoft.Xna.Framework.Media;
 using MonoGameGum;
 using BrickBreak.UI;
-using BrickBreak.GameObjects;
 using BrickBreak.Utility;
 using BrickBreak.Backgrounds;
 using System.Collections.Generic;

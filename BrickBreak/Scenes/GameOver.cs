@@ -6,7 +6,7 @@ using MonoGameLibrary;
 using MonoGameLibrary.Scenes;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
-using MonoGameLibrary.Graphics;
+using BrickBreak.Backgrounds;
 
 namespace BrickBreak.Scenes;
 
@@ -15,8 +15,6 @@ public class GameOver : Scene
     private const string GAME_OVER_TEXT = "GAME OVER";
 
     private string SCORE_TEXT = "Score: ";
-
-    private string FLOWER_TEXT = "Flowers: ";
 
     private const string PRESS_ENTER_TEXT = "Press Confirm To Continue";
 
@@ -34,23 +32,15 @@ public class GameOver : Scene
 
     private Vector2 _scoreTextOrigin;
 
-    private Vector2 _flowerTextPosition;
-
-    private Vector2 _flowerTextOrigin;
-
     private Vector2 _pressEnterPosition;
 
     private Vector2 _pressEnterOrigin;
 
-    private Texture2D _levelBackground;
+    private List<Background> _levelBackground;
 
-    private Sprite _flowerSprite;
-    private Vector2 _flowerSpritePosition;
-
-    public GameOver(int score, int numFlowers = 0)
+    public GameOver(int score)
     {
         SCORE_TEXT += score.ToString();
-        FLOWER_TEXT += numFlowers.ToString();
     }
 
     public override void Initialize()
@@ -72,21 +62,10 @@ public class GameOver : Scene
         _scoreTextPosition = new Vector2(640, 320);
         _scoreTextOrigin = size * 0.5f;
 
-        size = _font5x.MeasureString(FLOWER_TEXT);
-        _flowerTextPosition = new Vector2(640, 520);
-        _flowerTextOrigin = size * 0.5f;
-
         // Set the position and origin for the press enter text.
         size = _font.MeasureString(PRESS_ENTER_TEXT);
         _pressEnterPosition = new Vector2(640, 630);
         _pressEnterOrigin = size * 0.5f;
-
-        _flowerSprite.Scale = new Vector2(4.0f, 4.0f);
-
-        float flowerX = 980.0f;
-        float flowerY = 450.0f;
-
-        _flowerSpritePosition = new Vector2(flowerX, flowerY);
 
     }
 
@@ -111,7 +90,18 @@ public class GameOver : Scene
 
         List<Texture2D> clouds = new List<Texture2D>();
 
-        _levelBackground = Core.Content.Load<Texture2D>("images/backgrounds/fields/origbig");
+        _levelBackground = new List<Background>
+        {
+            new(Content.Load<Texture2D>("images/backgrounds/GameOverBg/1"), 0.0f),
+            new(Content.Load<Texture2D>("images/backgrounds/GameOverBg/2"), 0.0f),
+            new(Content.Load<Texture2D>("images/backgrounds/GameOverBg/3"), 10.0f),
+            new(Content.Load<Texture2D>("images/backgrounds/GameOverBg/4"), 0.0f),
+            new(Content.Load<Texture2D>("images/backgrounds/GameOverBg/5"), 0.0f),
+            new(Content.Load<Texture2D>("images/backgrounds/GameOverBg/6"), 0.0f),
+            new(Content.Load<Texture2D>("images/backgrounds/GameOverBg/7"), 0.0f),
+            new(Content.Load<Texture2D>("images/backgrounds/GameOverBg/8"), 0.0f),
+            new(Content.Load<Texture2D>("images/backgrounds/GameOverBg/9"), 0.0f)
+        };
 
     }
 
@@ -123,6 +113,11 @@ public class GameOver : Scene
         {
             Core.ChangeScene(new TitleScene());
         }
+
+        foreach(Background bg in _levelBackground)
+        {
+            bg.Update(gameTime);
+        }
     }
 
     public override void Draw(GameTime gameTime)
@@ -132,7 +127,10 @@ public class GameOver : Scene
         // Begin the sprite batch to prepare for rendering.
         Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
-        Core.SpriteBatch.Draw(_levelBackground, Core.GraphicsDevice.PresentationParameters.Bounds, Color.White);
+        foreach(Background bg in _levelBackground)
+        {
+            bg.Draw();
+        }
 
         // The color to use for the drop shadow text.
         Color dropShadowColor = Color.Black * 0.5f;
@@ -151,14 +149,8 @@ public class GameOver : Scene
         // Draw the Slime text on top of that at its original position.
         Core.SpriteBatch.DrawString(_font5x, SCORE_TEXT, _scoreTextPosition, Color.White, 0.0f, _scoreTextOrigin, 1.0f, SpriteEffects.None, 1.0f);
 
-        Core.SpriteBatch.DrawString(_font5x, FLOWER_TEXT, _flowerTextPosition + new Vector2(10, 10), dropShadowColor, 0.0f, _flowerTextOrigin, 1.0f, SpriteEffects.None, 1.0f);
-
-        Core.SpriteBatch.DrawString(_font5x, FLOWER_TEXT, _flowerTextPosition, Color.White, 0.0f, _flowerTextOrigin, 1.0f, SpriteEffects.None, 1.0f);
-
         // Draw the press enter text.
         Core.SpriteBatch.DrawString(_font, PRESS_ENTER_TEXT, _pressEnterPosition, Color.White, 0.0f, _pressEnterOrigin, 1.0f, SpriteEffects.None, 0.0f);
-
-        _flowerSprite.Draw(Core.SpriteBatch, _flowerSpritePosition);
 
         // Always end the sprite batch when finished.
         Core.SpriteBatch.End();
