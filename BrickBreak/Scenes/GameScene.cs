@@ -74,6 +74,9 @@ public class GameScene : Scene
     // Defines the tilemap to draw.
     private Tilemap _tilemap;
 
+    private TimeSpan _pausedTime;
+    private TimeSpan _lastStartPause;
+
     public GameScene(int startingLevel)
     {
         _currentLevelIndex = startingLevel;
@@ -109,6 +112,9 @@ public class GameScene : Scene
 
         // Initialize a new game to be played.
         InitializeNewGame();
+
+        _pausedTime = TimeSpan.Zero;
+        _lastStartPause = TimeSpan.Zero;
 
     }
 
@@ -255,7 +261,7 @@ public class GameScene : Scene
         // If the pause button is pressed, toggle the pause state. TODO implement GameController
         if(Core.Input.Keyboard.WasKeyJustPressed(Keys.Escape) || Core.Input.GamePads[(int)PlayerIndex.One].WasButtonJustPressed(Buttons.Start))
         {
-            TogglePause();
+            TogglePause(gameTime);
         }
 
         // At this point, if the game is paused, just return back early.
@@ -294,7 +300,7 @@ public class GameScene : Scene
 
     }
 
-    private void TogglePause()
+    private void TogglePause(GameTime gameTime)
     {
         if (_state == GameState.Paused)
         {
@@ -303,6 +309,8 @@ public class GameScene : Scene
 
             // And set the state back to playing.
             _state = GameState.Playing;
+
+            _lastStartPause = gameTime.ElapsedGameTime;
         }
         else
         {
@@ -314,6 +322,8 @@ public class GameScene : Scene
 
             // Set the grayscale effect saturation to 1.0f
             _saturation = 1.0f;
+
+            _pausedTime += gameTime.ElapsedGameTime - _lastStartPause;
         }
     }
 
@@ -336,6 +346,7 @@ public class GameScene : Scene
                 {
                     ball.CalculateBallBounce(paddleBounds, true);
                     _lastBallPaddleCollTime = gameTime.TotalGameTime;
+                    _pausedTime = TimeSpan.Zero;
                 }
 
                 /*Balls - Bricks collision*/
@@ -471,25 +482,30 @@ public class GameScene : Scene
         (
             () =>
             {
-                const int flashTimeMs = 1000;
-                const int blinkIntervalMs = 100;
-                double delta = gameTime.ElapsedGameTime.TotalMilliseconds;
-                Texture2D map = _colorMap;
-                var elapsedMs = gameTime.TotalGameTime.TotalMilliseconds - _lastBallPaddleCollTime.TotalMilliseconds;
-                var intervalsAgo = (int)(elapsedMs / flashTimeMs);
 
-                if(elapsedMs < flashTimeMs)
+                if (_state != GameState.Paused)
                 {
-                    _blinkTimerPaddleMs += delta;
 
-                    if(_blinkTimerPaddleMs >= blinkIntervalMs)
+                    const int flashTimeMs = 1000;
+                    const int blinkIntervalMs = 100;
+                    double delta = gameTime.ElapsedGameTime.TotalMilliseconds;
+                    Texture2D map = _colorMap;
+                    var elapsedMs = gameTime.TotalGameTime.TotalMilliseconds - _pausedTime.TotalMilliseconds - _lastBallPaddleCollTime.TotalMilliseconds;
+                    var intervalsAgo = (int)(elapsedMs / flashTimeMs);
+
+                    if(elapsedMs < flashTimeMs)
                     {
-                        map = _bricksColorMap.ColorMap;
-                        _blinkTimerPaddleMs = 0;
-                    }
-                }
+                        _blinkTimerPaddleMs += delta;
 
-                _colorSwapMaterial.SetParameter("ColorMap", map);
+                        if(_blinkTimerPaddleMs >= blinkIntervalMs)
+                        {
+                            map = _bricksColorMap.ColorMap;
+                            _blinkTimerPaddleMs = 0;
+                        }
+                    }
+
+                    _colorSwapMaterial.SetParameter("ColorMap", map);
+                }
             }
         );
 

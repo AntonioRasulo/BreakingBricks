@@ -44,11 +44,9 @@ public class Paddle
 
     private Vector2 SCALE;
 
-    private const float NORMAL_SPEED = 5f;
+    private const float NORMAL_SPEED = 6f;
     private const float SLOW_SPEED = 4f;
-    private const float FAST_SPEED = 6.0f;
-
-    //private float _speed = NORMAL_SPEED;
+    private const float FAST_SPEED = 8.0f;
 
     private int _lives = 3;
 
