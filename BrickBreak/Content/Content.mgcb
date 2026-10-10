@@ -627,6 +627,21 @@
 /processorParam:TextureFormat=Color
 /build:images/paddles/paddle_sticky_outline.png
 
+#begin images/PowerUp/SpeedUp/Projectile 2 wo blur.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,255,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/PowerUp/SpeedUp/Projectile 2 wo blur.png
+
+#begin images/PowerUp/SpeedUp/SpeedUpAtlas.xml
+/copy:images/PowerUp/SpeedUp/SpeedUpAtlas.xml
+
 #begin images/Tilemap/border_tilemap.xml
 /copy:images/Tilemap/border_tilemap.xml
 
@@ -641,18 +656,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:images/Tilemap/Futiristic-Tileset.png
-
-#begin images/Title/dall-schaf-brown-m.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,255,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:images/Title/dall-schaf-brown-m.png
 
 #begin images/UI/All keys and controller icons.png
 /importer:TextureImporter

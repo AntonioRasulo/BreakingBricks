@@ -56,6 +56,9 @@ public class Paddle
 
     private Rectangle _roomBounds;
 
+    private float POWER_UP_TIME_DURATION = 10.0f;
+    private float _powerUpTimer = 0f;
+
     public Paddle(Rectangle roomBounds)
     {
         _paddleState = PaddleState.NORMAL;
@@ -111,10 +114,23 @@ public class Paddle
         {
             PaddleState.FAST => new Vector2(direction * FAST_SPEED, 0f),
             PaddleState.SLOW => new Vector2(direction * SLOW_SPEED, 0f),
-            _ => new Vector2(direction * FAST_SPEED, 0f),
+            _ => new Vector2(direction * NORMAL_SPEED, 0f),
         };
 
         _position += _velocity;
+
+        float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+        if(_powerUpTimer > 0)
+        {
+            _powerUpTimer -= delta;
+            if(_powerUpTimer <= 0)
+            {
+                _powerUpTimer = 0;
+                setState(PaddleState.NORMAL);
+            }
+        }
+
     }
 
     public void Draw(Action configureSpriteBatch)
@@ -175,6 +191,30 @@ public class Paddle
     public bool isDead()
     {
         return (_lives == 0);
+    }
+
+    public void setFastSpeed()
+    {
+        setState(PaddleState.FAST);
+        _powerUpTimer += POWER_UP_TIME_DURATION;
+    }
+
+    public void setState(PaddleState newState)
+    {
+        _paddleState = newState;
+        UpdatePaddleSprite();
+    }
+
+    private void UpdatePaddleSprite()
+    {
+
+        Texture2D newSprite = _paddleState switch
+        {
+            PaddleState.FAST => _fastPaddle,
+            _ => _normalPaddle
+
+        };
+        _paddleSprite.SetRegion(newSprite);
     }
 
 }

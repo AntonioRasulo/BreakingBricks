@@ -176,6 +176,7 @@ public class GameScene : Scene
 
         Ball.LoadContent();
         Brick.LoadContent();
+        CollectibleHandler.LoadContent();
 
         _balls = new List<Ball>();
         _bricks = new List<Brick>();
@@ -270,6 +271,8 @@ public class GameScene : Scene
             ball.Update(gameTime, _paddle.getVelocity());
         }
 
+        CollectibleHandler.Update(gameTime);
+
         CollisionChecks(gameTime);
 
         _bricks.RemoveAll(brick => brick.IsToRemove());
@@ -351,6 +354,11 @@ public class GameScene : Scene
                             ball.CalculateBallBounce(brickBounds);
                             _score += brick.IsHit();
                             _ui.UpdateScoreText(_score);
+                            if(brick.IsToRemove())
+                            {
+                                Vector2 genPosition = new Vector2(brickBounds.X, brickBounds.Y + brickBounds.Height);
+                                CollectibleHandler.GenerateCollectible(genPosition);
+                            }
                             break;
                         }
                     }
@@ -391,6 +399,16 @@ public class GameScene : Scene
                     ball.Bounce(-Vector2.UnitX);
                 }
             }
+        }
+
+        /* Character - Collectible collision */
+        collectibleType collectibleCollided = CollectibleHandler.CheckPaddleCollision(paddleBounds);
+
+        switch (collectibleCollided)
+        {
+            case collectibleType.SPEED_UP:
+            _paddle.setFastSpeed();
+            break;
         }
 
     }
@@ -473,6 +491,8 @@ public class GameScene : Scene
                 _colorSwapMaterial.SetParameter("ColorMap", map);
             }
         );
+
+        CollectibleHandler.Draw();
 
         // Always end the sprite batch when finished.
         Core.SpriteBatch.End();

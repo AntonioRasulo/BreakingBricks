@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas>
+    <Texture>images/PowerUp/SpeedUp/Projectile 2 wo blur</Texture>
+    <Regions>
+        <Region name="reg1" x="21" y="8" width="22" height="15" />
+        <Region name="reg2" x="52" y="6" width="32" height="24" />
+        <Region name="reg3" x="102" y="6" width="28" height="25" />
+        <Region name="reg4" x="153" y="6" width="22" height="19" />
+        <Region name="reg5" x="201" y="6" width="21" height="24" />
+        <Region name="reg6" x="247" y="6" width="25" height="26" />
+        <Region name="reg7" x="297" y="16" width="24" height="11" />
+        <Region name="reg8" x="344" y="10" width="30" height="23" />
+        <Region name="reg9" x="386" y="7" width="43" height="37" />
+        <Region name="reg10" x="433" y="4" width="45" height="37" />
+        <Region name="reg11" x="479" y="4" width="46" height="39" />
+        <Region name="reg12" x="527" y="3" width="46" height="40" />
+        <Region name="reg13" x="577" y="4" width="43" height="40" />
+        <Region name="reg14" x="625" y="3" width="43" height="41" />
+        <Region name="reg15" x="672" y="3" width="44" height="40" />
+        <Region name="reg16" x="723" y="9" width="42" height="35" />
+    </Regions>
+    <Animations>
+        <Animation name="speedup-bonus-animation" delay="50">
+            <Frame region="reg1" />
+            <Frame region="reg2" />
+            <Frame region="reg3" />
+            <Frame region="reg4" />
+            <Frame region="reg5" />
+            <Frame region="reg6" />
+            <Frame region="reg7" />
+            <Frame region="reg8" />
+            <Frame region="reg9" />
+            <Frame region="reg10" />
+            <Frame region="reg11" />
+            <Frame region="reg12" />
+            <Frame region="reg13" />
+            <Frame region="reg14" />
+            <Frame region="reg15" />
+            <Frame region="reg16" />
+        </Animation>
+    </Animations>
+</TextureAtlas>
