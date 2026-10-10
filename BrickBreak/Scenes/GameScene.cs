@@ -356,7 +356,8 @@ public class GameScene : Scene
                             _ui.UpdateScoreText(_score);
                             if(brick.IsToRemove())
                             {
-                                Vector2 genPosition = new Vector2(brickBounds.X, brickBounds.Y + brickBounds.Height);
+                                Vector2 position = brick.GetPosition();
+                                Vector2 genPosition = new Vector2(position.X, position.Y + brickBounds.Height);
                                 CollectibleHandler.GenerateCollectible(genPosition);
                             }
                             break;

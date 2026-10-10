@@ -22,6 +22,8 @@ public class PowerUpAnimation : Collectible
             Scale = new Vector2(scale, scale),
             Rotation = rotation
         };
+
+        _animatedSprite.CenterOrigin();
     }
 
     public override void Update(GameTime gameTime)

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using MonoGameLibrary;
 using MonoGameLibrary.Graphics;
 
@@ -154,6 +153,11 @@ public class Brick
         );
 
         return bounds;
+    }
+
+    public Vector2 GetPosition()
+    {
+        return _position;
     }
 
 }
