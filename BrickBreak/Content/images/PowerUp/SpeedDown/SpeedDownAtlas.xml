@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas>
+    <Texture>images/PowerUp/SpeedDown/$Snail4</Texture>
+    <Regions>
+        <Region name="reg1" x="21" y="8" width="22" height="15" />
+        <Region name="reg2" x="52" y="6" width="32" height="24" />
+        <Region name="reg3" x="102" y="6" width="28" height="25" />
+    </Regions>
+    <Animations>
+        <Animation name="speedup-bonus-animation" delay="200">
+            <Frame region="reg1" />
+            <Frame region="reg2" />
+            <Frame region="reg3" />
+        </Animation>
+    </Animations>
+</TextureAtlas>

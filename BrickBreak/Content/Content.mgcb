@@ -627,6 +627,21 @@
 /processorParam:TextureFormat=Color
 /build:images/paddles/paddle_sticky_outline.png
 
+#begin images/PowerUp/SpeedDown/$Snail4.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/PowerUp/SpeedDown/$Snail4.png
+
+#begin images/PowerUp/SpeedDown/SpeedDownAtlas.xml
+/copy:images/PowerUp/SpeedDown/SpeedDownAtlas.xml
+
 #begin images/PowerUp/SpeedUp/Projectile 2 wo blur.png
 /importer:TextureImporter
 /processor:TextureProcessor
