@@ -26,7 +26,7 @@
             <Frame region="reg3" />
             <Frame region="reg4" />
             <Frame region="reg5" />
-            <Frame region="reg6" />
+            <!-- <Frame region="reg6" />
             <Frame region="reg7" />
             <Frame region="reg8" />
             <Frame region="reg9" />
@@ -36,7 +36,7 @@
             <Frame region="reg13" />
             <Frame region="reg14" />
             <Frame region="reg15" />
-            <Frame region="reg16" />
+            <Frame region="reg16" /> -->
         </Animation>
     </Animations>
 </TextureAtlas>
