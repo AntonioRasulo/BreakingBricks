@@ -5,7 +5,8 @@ namespace BrickBreak.GameObjects;
 public enum collectibleType
 {
     NONE,
-    SPEED_UP
+    SPEED_UP,
+    SPEED_DOWN
 }
 
 public abstract class Collectible

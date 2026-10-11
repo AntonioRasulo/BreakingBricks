@@ -17,10 +17,12 @@ public class CollectibleHandler
     private readonly Vector2 INV_SCALE = new(0.2f, 0.2f);
 
     public static Animation _speedUpAnimation;
+    public static Animation _speedDownAnimation;
 
     private static SoundEffect _collectSound;
 
-    private const int SPEED_UP_PROB = 100; // 5%
+    private const int SPEED_UP_PROB = 50; // 5%
+    private const int SPEED_DOWN_PROB = 100;
 
     public CollectibleHandler()
     {
@@ -34,10 +36,10 @@ public class CollectibleHandler
         _collectibleRand = new Random();
 
         TextureAtlas speedUpAtlas = TextureAtlas.FromFile(Core.Content, "images/PowerUp/SpeedUp/SpeedUpAtlas.xml");
-
-        //_collectSound = Core.Content.Load<SoundEffect>("audio/Sound effects/Fruit collect 1");
+        TextureAtlas speedDownAtlas = TextureAtlas.FromFile(Core.Content, "images/PowerUp/SpeedDown/SpeedDownAtlas.xml");
 
         _speedUpAnimation = speedUpAtlas.GetAnimation("speedup-bonus-animation");
+        _speedDownAnimation = speedDownAtlas.GetAnimation("speeddown-bonus-animation");
 
     }
 
@@ -70,10 +72,10 @@ public class CollectibleHandler
         {
             _collectibles.Add(new PowerUpAnimation(position, collectibleType.SPEED_UP, 2.0f, (float)(Math.PI * 0.5f)));
         }
-        // else if (rand < PlayerStatsManager.currentStats.clockProbability && rand >LIVES_MAX_PROB)
-        // {
-        //     _collectibles.Add(new PowerUp(position, collectibleType.CLOCK));
-        // }
+        else if (rand < SPEED_DOWN_PROB)
+        {
+            _collectibles.Add(new PowerUpAnimation(position, collectibleType.SPEED_DOWN, 2.0f));
+        }
         // else if (rand < PlayerStatsManager.currentStats.InvincibilityProb && rand > FREEZE_MAX_PROB)
         // {
         //     _collectibles.Add(new PowerUp(position, collectibleType.INVINCIBILITY));

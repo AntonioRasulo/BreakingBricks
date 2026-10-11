@@ -14,6 +14,7 @@ public class PowerUpAnimation : Collectible
         Animation powerAnimation = type switch
         {
             collectibleType.SPEED_UP => CollectibleHandler._speedUpAnimation,
+            collectibleType.SPEED_DOWN => CollectibleHandler._speedDownAnimation,
             _ => null
         };
 

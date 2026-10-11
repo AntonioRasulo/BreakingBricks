@@ -416,11 +416,9 @@ public class GameScene : Scene
         /* Character - Collectible collision */
         collectibleType collectibleCollided = CollectibleHandler.CheckPaddleCollision(paddleBounds);
 
-        switch (collectibleCollided)
+        if(collectibleCollided != collectibleType.NONE)
         {
-            case collectibleType.SPEED_UP:
-            _paddle.setFastSpeed();
-            break;
+            _paddle.hitPowerUp(collectibleCollided);
         }
 
     }

@@ -44,9 +44,9 @@ public class Paddle
 
     private Vector2 SCALE;
 
-    private const float NORMAL_SPEED = 6f;
-    private const float SLOW_SPEED = 4f;
-    private const float FAST_SPEED = 8.0f;
+    private const float NORMAL_SPEED = 8f;
+    private const float SLOW_SPEED = 6f;
+    private const float FAST_SPEED = 10.0f;
 
     private int _lives = 3;
 
@@ -191,10 +191,16 @@ public class Paddle
         return (_lives == 0);
     }
 
-    public void setFastSpeed()
+    public void hitPowerUp(collectibleType type)
     {
-        setState(PaddleState.FAST);
-        _powerUpTimer += POWER_UP_TIME_DURATION;
+        PaddleState newState = type switch
+        {
+            collectibleType.SPEED_UP => PaddleState.FAST,
+            collectibleType.SPEED_DOWN => PaddleState.SLOW,
+            _ => PaddleState.NORMAL
+        };
+        _powerUpTimer = POWER_UP_TIME_DURATION;
+        setState(newState);
     }
 
     public void setState(PaddleState newState)
@@ -209,6 +215,7 @@ public class Paddle
         Texture2D newSprite = _paddleState switch
         {
             PaddleState.FAST => _fastPaddle,
+            PaddleState.SLOW => _slowPaddle,
             _ => _normalPaddle
 
         };
