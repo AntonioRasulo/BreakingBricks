@@ -27,6 +27,12 @@ public class TextureRegion
         SourceRectangle = new Rectangle(x, y, width, height);
     }
 
+    public TextureRegion(Texture2D texture)
+    {
+        Texture = texture;
+        SourceRectangle = texture.Bounds;
+    }
+
     /// <summary>
     /// Gets or Sets the source texture this texture region is part of.
     /// </summary>

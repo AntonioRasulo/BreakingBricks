@@ -306,4 +306,9 @@ public class Ball
         return _attachStatus;
     }
 
+    public Vector2 getPosition()
+    {
+        return _position;
+    }
+
 }

@@ -77,6 +77,8 @@ public class GameScene : Scene
     private TimeSpan _pausedTime;
     private TimeSpan _lastStartPause;
 
+    private List<Smoke> _smokeAnimations;
+
     public GameScene(int startingLevel)
     {
         _currentLevelIndex = startingLevel;
@@ -183,9 +185,11 @@ public class GameScene : Scene
         Ball.LoadContent();
         Brick.LoadContent();
         CollectibleHandler.LoadContent();
+        Smoke.LoadContent();
 
         _balls = new List<Ball>();
         _bricks = new List<Brick>();
+        _smokeAnimations = new List<Smoke>();
 
         float initialPlatformPosY = Core.GraphicsDevice.PresentationParameters.BackBufferHeight * 0.5f;
         float initialPlatformPosX = Core.GraphicsDevice.PresentationParameters.BackBufferWidth * 0.1f;
@@ -298,6 +302,13 @@ public class GameScene : Scene
             bg.Update(gameTime);
         }
 
+        foreach(Smoke smoke in _smokeAnimations)
+        {
+            smoke.Update(gameTime);
+        }
+
+        _smokeAnimations.RemoveAll(smoke => smoke.isAnimationComplete());
+
     }
 
     private void TogglePause(GameTime gameTime)
@@ -347,6 +358,7 @@ public class GameScene : Scene
                     ball.CalculateBallBounce(paddleBounds, true);
                     _lastBallPaddleCollTime = gameTime.TotalGameTime;
                     _pausedTime = TimeSpan.Zero;
+                    _smokeAnimations.Add(new Smoke(ball.getPosition()));
                 }
 
                 /*Balls - Bricks collision*/
@@ -371,6 +383,7 @@ public class GameScene : Scene
                                 Vector2 genPosition = new Vector2(position.X, position.Y + brickBounds.Height);
                                 CollectibleHandler.GenerateCollectible(genPosition);
                             }
+                            _smokeAnimations.Add(new Smoke(ball.getPosition()));
                             break;
                         }
                     }
@@ -388,6 +401,7 @@ public class GameScene : Scene
                 if (ballBounds.Top < _roomBounds.Top)
                 {
                     ball.Bounce(Vector2.UnitY);
+                    _smokeAnimations.Add(new Smoke(ball.getPosition()));
                 }
                 else if (ballBounds.Bottom > _roomBounds.Bottom)
                 {
@@ -405,15 +419,17 @@ public class GameScene : Scene
                 if (ballBounds.Left < _roomBounds.Left)
                 {
                     ball.Bounce(Vector2.UnitX);
+                    _smokeAnimations.Add(new Smoke(ball.getPosition()));
                 }
                 else if (ballBounds.Right > _roomBounds.Right)
                 {
                     ball.Bounce(-Vector2.UnitX);
+                    _smokeAnimations.Add(new Smoke(ball.getPosition()));
                 }
             }
         }
 
-        /* Character - Collectible collision */
+        /* Paddle - Collectible collision */
         collectibleType collectibleCollided = CollectibleHandler.CheckPaddleCollision(paddleBounds);
 
         if(collectibleCollided != collectibleType.NONE)
@@ -436,18 +452,16 @@ public class GameScene : Scene
             spriteSortMode = SpriteSortMode.Deferred;
         }
 
-        // Draw the background
+        // Draw the background and tilemap
         Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
-        foreach (var layer in _levelBackground)   // far layers first, near layers last
-            layer.Draw(Color.White * 0.5f);
-        Core.SpriteBatch.End();
 
-        // Draw the background and apply no effects to it
-        Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
-        //Core.SpriteBatch.Draw(_levelBackground, Core.GraphicsDevice.PresentationParameters.Bounds, Color.White);
-        // Draw the tilemap
-        //_tilemap.Draw(Core.SpriteBatch);
+        foreach (var layer in _levelBackground)
+        {
+            // Far layers first, near layers last
+            layer.Draw(Color.White * 0.5f);
+        }
         _tilemap.DrawBorder(Core.SpriteBatch);
+
         Core.SpriteBatch.End();
 
         // Begin the sprite batch to prepare for rendering.
@@ -466,6 +480,11 @@ public class GameScene : Scene
         foreach(Brick brick in _bricks)
         {
             brick.Draw();
+        }
+
+        foreach(Smoke smoke in _smokeAnimations)
+        {
+            smoke.Draw();
         }
 
         // Draw lives sprite
