@@ -78,6 +78,7 @@ public class GameScene : Scene
     private TimeSpan _lastStartPause;
 
     private List<Smoke> _smokeAnimations;
+    private CollisionString _collStr;
 
     public GameScene(int startingLevel)
     {
@@ -186,10 +187,12 @@ public class GameScene : Scene
         Brick.LoadContent();
         CollectibleHandler.LoadContent();
         Smoke.LoadContent();
+        CollisionString.LoadContent();
 
         _balls = new List<Ball>();
         _bricks = new List<Brick>();
         _smokeAnimations = new List<Smoke>();
+        _collStr = null;
 
         float initialPlatformPosY = Core.GraphicsDevice.PresentationParameters.BackBufferHeight * 0.5f;
         float initialPlatformPosX = Core.GraphicsDevice.PresentationParameters.BackBufferWidth * 0.1f;
@@ -309,6 +312,15 @@ public class GameScene : Scene
 
         _smokeAnimations.RemoveAll(smoke => smoke.isAnimationComplete());
 
+        if(_collStr != null)
+        {
+            _collStr.Update(gameTime);
+            if(_collStr.IsComplete())
+            {
+                _collStr = null;
+            }
+        }
+
     }
 
     private void TogglePause(GameTime gameTime)
@@ -355,11 +367,14 @@ public class GameScene : Scene
 
                 if(collision)
                 {
+                    Vector2 ballPosition = ball.getPosition();
                     ball.CalculateBallBounce(paddleBounds, true);
                     _lastBallPaddleCollTime = gameTime.TotalGameTime;
                     _pausedTime = TimeSpan.Zero;
-                    _smokeAnimations.Add(new Smoke(ball.getPosition()));
+                    _smokeAnimations.Add(new Smoke(ballPosition));
                     _paddle.startTweenScale();
+                    Vector2 collStrPos = new Vector2(ballPosition.X, ball.GetBounds().Top);
+                    _collStr = new CollisionString("Pow", collStrPos);
                 }
 
                 /*Balls - Bricks collision*/
@@ -487,6 +502,8 @@ public class GameScene : Scene
         {
             smoke.Draw();
         }
+
+        _collStr?.Draw();
 
         // Draw lives sprite
         int roomWidth = Core.GraphicsDevice.PresentationParameters.BackBufferWidth;

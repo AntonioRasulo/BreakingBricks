@@ -103,6 +103,13 @@
 /processorParam:TextureFormat=Compressed
 /build:fonts/bricksFonts/bricks.spritefont
 
+#begin fonts/cartoonFonts/cartoon.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:fonts/cartoonFonts/cartoon.spritefont
+
 #begin fonts/mountain_and_nature/Mountain_and_Nature_small.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
