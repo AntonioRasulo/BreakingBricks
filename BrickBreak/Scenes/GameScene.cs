@@ -359,6 +359,7 @@ public class GameScene : Scene
                     _lastBallPaddleCollTime = gameTime.TotalGameTime;
                     _pausedTime = TimeSpan.Zero;
                     _smokeAnimations.Add(new Smoke(ball.getPosition()));
+                    _paddle.startTweenScale();
                 }
 
                 /*Balls - Bricks collision*/
@@ -503,25 +504,25 @@ public class GameScene : Scene
                 if (_state != GameState.Paused)
                 {
 
-                    const int flashTimeMs = 1000;
-                    const int blinkIntervalMs = 100;
-                    double delta = gameTime.ElapsedGameTime.TotalMilliseconds;
-                    Texture2D map = _colorMap;
-                    var elapsedMs = gameTime.TotalGameTime.TotalMilliseconds - _pausedTime.TotalMilliseconds - _lastBallPaddleCollTime.TotalMilliseconds;
-                    var intervalsAgo = (int)(elapsedMs / flashTimeMs);
+                    // const int flashTimeMs = 1000;
+                    // const int blinkIntervalMs = 100;
+                    // double delta = gameTime.ElapsedGameTime.TotalMilliseconds;
+                    // Texture2D map = _colorMap;
+                    // var elapsedMs = gameTime.TotalGameTime.TotalMilliseconds - _pausedTime.TotalMilliseconds - _lastBallPaddleCollTime.TotalMilliseconds;
+                    // var intervalsAgo = (int)(elapsedMs / flashTimeMs);
 
-                    if(elapsedMs < flashTimeMs)
-                    {
-                        _blinkTimerPaddleMs += delta;
+                    // if(elapsedMs < flashTimeMs)
+                    // {
+                    //     _blinkTimerPaddleMs += delta;
 
-                        if(_blinkTimerPaddleMs >= blinkIntervalMs)
-                        {
-                            map = _bricksColorMap.ColorMap;
-                            _blinkTimerPaddleMs = 0;
-                        }
-                    }
+                    //     if(_blinkTimerPaddleMs >= blinkIntervalMs)
+                    //     {
+                    //         map = _bricksColorMap.ColorMap;
+                    //         _blinkTimerPaddleMs = 0;
+                    //     }
+                    // }
 
-                    _colorSwapMaterial.SetParameter("ColorMap", map);
+                    // _colorSwapMaterial.SetParameter("ColorMap", map);
                 }
             }
         );

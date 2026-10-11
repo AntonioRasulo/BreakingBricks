@@ -14,7 +14,9 @@ public enum PaddleState
     SLOW,
     MAGNETIC,
     STICKY,
-    GOLDEN
+    GOLDEN,
+    BIG,
+    SMALL
 }
 
 public static class SizeScale
@@ -40,9 +42,9 @@ public class Paddle
     private Texture2D _slowPaddle;
     private Texture2D _stickyPaddle;
 
-    private float xSizeScale;
+    private const float SCALE_Y = 0.15f; 
 
-    private Vector2 SCALE;
+    private Vector2 _scale;
 
     private const float NORMAL_SPEED = 8f;
     private const float SLOW_SPEED = 6f;
@@ -57,6 +59,10 @@ public class Paddle
     private float POWER_UP_TIME_DURATION = 10.0f;
     private float _powerUpTimer = 0f;
 
+    private const float tweenTimeMs = 100;
+    private float _tweenTimer = 0f;
+    private const int tweenPercentage = 10;
+
     public Paddle(Rectangle roomBounds)
     {
         _paddleState = PaddleState.NORMAL;
@@ -68,9 +74,7 @@ public class Paddle
             windowWidth * 0.5f,
             windowHeight * 0.975f);
 
-        xSizeScale = SizeScale.BIG;
-
-        SCALE = new(xSizeScale, 0.15f);
+        _scale = new(SizeScale.NORMAL, SCALE_Y);
 
         _roomBounds = roomBounds;
     }
@@ -86,7 +90,7 @@ public class Paddle
 
         _paddleSprite = new Sprite(_normalPaddle)
         {
-            Scale = SCALE
+            Scale = _scale
         };
         _paddleSprite.CenterOrigin();
     }
@@ -126,6 +130,16 @@ public class Paddle
             {
                 _powerUpTimer = 0;
                 setState(PaddleState.NORMAL);
+            }
+        }
+
+        if(_tweenTimer > 0)
+        {
+            float deltaMs = (float)gameTime.ElapsedGameTime.Milliseconds;
+            _tweenTimer -= deltaMs;
+            if(_tweenTimer <= 0)
+            {
+                restoreScale();
             }
         }
 
@@ -220,6 +234,29 @@ public class Paddle
 
         };
         _paddleSprite.SetRegion(newSprite);
+    }
+
+    public void startTweenScale()
+    {
+        _tweenTimer = tweenTimeMs;
+        float scaleX = _paddleSprite.Scale.X;
+        float scaleY = _paddleSprite.Scale.Y;
+        float newScaleX = scaleX + (scaleX * tweenPercentage) * 0.01f;
+        float newScaleY = scaleY + (scaleY * tweenPercentage) * 0.01f;
+        _scale = new Vector2(newScaleX, newScaleY);
+        _paddleSprite.Scale = _scale;
+    }
+
+    private void restoreScale()
+    {
+        float scaleX = _paddleState switch
+        {
+            PaddleState.BIG => SizeScale.BIG,
+            PaddleState.SMALL => SizeScale.SMALL,
+            _ => SizeScale.NORMAL
+        };
+        _scale = new Vector2(scaleX, SCALE_Y);
+        _paddleSprite.Scale = _scale;
     }
 
 }
