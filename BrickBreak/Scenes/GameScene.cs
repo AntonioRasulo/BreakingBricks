@@ -80,6 +80,13 @@ public class GameScene : Scene
     private List<Smoke> _smokeAnimations;
     private CollisionString _collStr;
 
+    private float _shakeTimerMs = 0.0f;
+    private const float SHAKE_TIME_MS = 100.0f;
+    private const float SHAKE_RANGE_MAX = 20f;
+    private const float SHAKE_RANGE_MIN = -20f;
+
+    private Random _randomOffset;
+
     public GameScene(int startingLevel)
     {
         _currentLevelIndex = startingLevel;
@@ -193,6 +200,7 @@ public class GameScene : Scene
         _bricks = new List<Brick>();
         _smokeAnimations = new List<Smoke>();
         _collStr = null;
+        _randomOffset = new Random();
 
         float initialPlatformPosY = Core.GraphicsDevice.PresentationParameters.BackBufferHeight * 0.5f;
         float initialPlatformPosX = Core.GraphicsDevice.PresentationParameters.BackBufferWidth * 0.1f;
@@ -285,6 +293,16 @@ public class GameScene : Scene
         }
 
         CollectibleHandler.Update(gameTime);
+
+        if(_shakeTimerMs > 0)
+        {
+            float deltaMs = gameTime.ElapsedGameTime.Microseconds;
+            _shakeTimerMs -= deltaMs;
+            if(_shakeTimerMs <= 0)
+            {
+                _shakeTimerMs = 0;
+            }
+        }
 
         CollisionChecks(gameTime);
 
@@ -400,6 +418,7 @@ public class GameScene : Scene
                                 CollectibleHandler.GenerateCollectible(genPosition);
                             }
                             _smokeAnimations.Add(new Smoke(ball.getPosition()));
+                            _shakeTimerMs = SHAKE_TIME_MS;
                             break;
                         }
                     }
@@ -457,6 +476,16 @@ public class GameScene : Scene
 
     public override void Draw(GameTime gameTime)
     {
+        float offSetX = 0.0f;
+        float offSetY = 0.0f;
+        if(_shakeTimerMs > 0)
+        {
+            offSetX = (float)_randomOffset.NextDouble() * (SHAKE_RANGE_MAX - SHAKE_RANGE_MIN) + SHAKE_RANGE_MIN;
+            offSetY = (float)_randomOffset.NextDouble() * (SHAKE_RANGE_MAX - SHAKE_RANGE_MIN) + SHAKE_RANGE_MIN;
+            Console.WriteLine("OffsetX: "+ offSetX);
+            Console.WriteLine("OffsetY: "+ offSetY);
+        }
+
         Core.GraphicsDevice.Clear(new Color(57, 120, 168));
 
         _colorSwapMaterial.SetParameter("Saturation", _saturation);
@@ -469,7 +498,7 @@ public class GameScene : Scene
         }
 
         // Draw the background and tilemap
-        Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
+        Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: Matrix.CreateTranslation(offSetX, offSetY, 0.0f));
 
         foreach (var layer in _levelBackground)
         {
@@ -483,9 +512,9 @@ public class GameScene : Scene
         // Begin the sprite batch to prepare for rendering.
         Core.SpriteBatch.Begin( samplerState: SamplerState.PointClamp,
                                 sortMode: spriteSortMode,
-                                effect: _colorSwapMaterial.Effect);
+                                effect: _colorSwapMaterial.Effect, transformMatrix: Matrix.CreateTranslation(offSetX, offSetY, 0.0f));
 
-        // Update the colorMap for the slime  
+        // Update the colorMap
         _colorSwapMaterial.SetParameter("ColorMap", _colorMap);
 
         foreach(Ball ball in _balls)
@@ -628,5 +657,21 @@ public class GameScene : Scene
             Core.ChangeScene(new GameOver(_score));
         }
     }
+
+    // private Vector2 getShakeOffset(GameTime gameTime)
+    // {
+    //     Vector2 offset = new Vector2(0,0);
+    //     if (_shakeViewport)
+    //     {
+    //         offset = new Vector2((float)(Math.Sin(shakeStartAngle) * shakeRadius), (float)(Math.Cos(shakeStartAngle) * shakeRadius));
+    //         float shakeRadius -= 0.25f;
+    //         shakeStartAngle += (150 + rand.Next(60));
+    //         if (gameTime.TotalGameTime.TotalSeconds - shakeStart.TotalSeconds > 2 || shakeRadius <= 0)
+    //         {
+    //             _shakeViewport = false;
+    //         }
+    //     }
+    //     return offset;
+    // }
 
 }
