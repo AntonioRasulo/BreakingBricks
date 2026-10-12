@@ -27,7 +27,7 @@ public class CollisionString
         _position = position;
         _screenTime = TIME_ON_SCREEN_MS;
         _size = _font.MeasureString(_string);
-        _position.X -= _size.X * 0.5f;
+        //_position.X -= _size.X * 0.5f;
 
         _rotation = lastRotation switch
         {
@@ -57,8 +57,6 @@ public class CollisionString
 
     public void Draw()
     {
-        //Vector2 originRotation = _position;
-        //originRotation.X = _position.X + _size.X * 0.5f;
         Vector2 originRotation = new(_size.X * 0.5f, 0.0f);
         Core.SpriteBatch.DrawString(_font, _string, _position, Color.White, _rotation, originRotation, 1.0f, SpriteEffects.None, 0f);
     }
