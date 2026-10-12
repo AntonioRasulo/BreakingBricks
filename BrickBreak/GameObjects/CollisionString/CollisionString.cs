@@ -68,15 +68,4 @@ public class CollisionString
         return (_screenTime <= 0);
     }
 
-    public Rectangle getBounds()
-    {
-        return new Rectangle
-        (
-            (int)_position.X,
-            (int)(_position.Y - _size.Y),
-            (int)_size.X,
-            (int)_size.Y
-        );
-    }
-
 }
