@@ -18,6 +18,8 @@ public class Moving
     private static GamePadState previousGamePadState;
     private const float THUMBSTICK_DEADZONE = 0.2f;
 
+    public static MovingDir lastMovingDir = MovingDir.RIGHT;
+
     public static MovingDir IsMoving()
     {
 
@@ -27,7 +29,10 @@ public class Moving
                              currentGamePadState.ThumbSticks.Left.X < -THUMBSTICK_DEADZONE;
 
         if (IsMovingLeft)
+        {
+            lastMovingDir = MovingDir.LEFT;
             return MovingDir.LEFT;
+        }
 
         bool IsMovingRight = currentKeyboardState.IsKeyDown(Keys.D) ||
                               currentKeyboardState.IsKeyDown(Keys.Right) ||
@@ -35,7 +40,10 @@ public class Moving
                               currentGamePadState.ThumbSticks.Left.X > THUMBSTICK_DEADZONE;
 
         if (IsMovingRight)
+        {
+            lastMovingDir = MovingDir.RIGHT;
             return MovingDir.RIGHT;
+        }
 
         return MovingDir.IDLE;
     }

@@ -116,10 +116,14 @@ public class Ball
 
             if(Moving.IsShootingPressed())
             {
-                float directionX = (float)Moving.IsMoving();
-                if(directionX == 0.0f)
+                float directionX = (float)Moving.lastMovingDir;
+                if(directionX == 0.0f || directionX == 1.0f)
                 {
                     directionX = 1.0f;
+                }
+                else
+                {
+                    directionX = -1.0f;
                 }
 
                 _velocity = new Vector2(directionX, -1) * _movementSpeed;
