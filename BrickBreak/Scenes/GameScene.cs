@@ -219,7 +219,7 @@ public class GameScene : Scene
 
         // Load the colorSwap material
         _colorSwapMaterial = Content.WatchMaterial("effects/colorSwapEffect");
-        _colorSwapMaterial.IsDebugVisible = true;
+        _colorSwapMaterial.IsDebugVisible = false;
 
         _colorMap = Core.Content.Load<Texture2D>("images/effects/color-map-1");
         _bricksColorMap = new RedColorMap();
@@ -287,9 +287,18 @@ public class GameScene : Scene
 
         _paddle.Update(gameTime);
 
+        bool areAllBallsFree = true;
         foreach(Ball ball in _balls)
         {
             ball.Update(gameTime, _paddle.getVelocity());
+            if(ball.getAttachedStatus() == AttachedStatus.ATTACHED)
+            {
+                areAllBallsFree = false;
+            }
+        }
+        if(areAllBallsFree)
+        {
+            Ball.ResetDetach();
         }
 
         CollectibleHandler.Update(gameTime);
@@ -385,14 +394,21 @@ public class GameScene : Scene
 
                 if(collision)
                 {
-                    Vector2 ballPosition = ball.getPosition();
                     ball.CalculateBallBounce(paddleBounds, true);
-                    _lastBallPaddleCollTime = gameTime.TotalGameTime;
-                    _pausedTime = TimeSpan.Zero;
-                    _smokeAnimations.Add(new Smoke(ballPosition));
-                    _paddle.startTweenScale();
-                    Vector2 collStrPos = new Vector2(ballPosition.X, ball.GetBounds().Top);
-                    _collStr = new CollisionString("Pow", collStrPos);
+                    if(_paddle.isSitcky())
+                    {
+                        ball.Attach();
+                    }
+                    else
+                    {
+                        Vector2 ballPosition = ball.getPosition();
+                        _lastBallPaddleCollTime = gameTime.TotalGameTime;
+                        _pausedTime = TimeSpan.Zero;
+                        _smokeAnimations.Add(new Smoke(ballPosition));
+                        _paddle.startTweenScale();
+                        Vector2 collStrPos = new Vector2(ballPosition.X, ball.GetBounds().Top);
+                        _collStr = new CollisionString("Pow", collStrPos);
+                    }
                 }
 
                 /*Balls - Bricks collision*/
@@ -482,8 +498,6 @@ public class GameScene : Scene
         {
             offSetX = (float)_randomOffset.NextDouble() * (SHAKE_RANGE_MAX - SHAKE_RANGE_MIN) + SHAKE_RANGE_MIN;
             offSetY = (float)_randomOffset.NextDouble() * (SHAKE_RANGE_MAX - SHAKE_RANGE_MIN) + SHAKE_RANGE_MIN;
-            Console.WriteLine("OffsetX: "+ offSetX);
-            Console.WriteLine("OffsetY: "+ offSetY);
         }
 
         Core.GraphicsDevice.Clear(new Color(57, 120, 168));

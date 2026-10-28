@@ -1,6 +1,7 @@
 using MonoGameLibrary;
 using MonoGameLibrary.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace BrickBreak.GameObjects;
 
@@ -8,27 +9,17 @@ public class PowerUpSprite : Collectible
 {
     private Sprite _sprite;
 
-    public PowerUpSprite(Vector2 position, collectibleType type):
+    public PowerUpSprite(Vector2 position, collectibleType type, float scale):
     base(position, type)
     {
-        _sprite = type switch
+        Texture2D texture = type switch
         {
-            //collectibleType.SPEED_UP => CollectibleHandler._speedUpAnimation,
+            collectibleType.STICKY => CollectibleHandler._stickySprite,
             _ => null
-        };   
-    }
-
-    public override void Update(GameTime gameTime)
-    {
-        int screenHeight = Core.GraphicsDevice.PresentationParameters.BackBufferHeight;
-        if(_position.Y < screenHeight - _sprite.Height)
-        {
-            _position += VELOCITY_Y;
-        }
-        else
-        {
-            _position.Y = screenHeight - _sprite.Height;
-        }   
+        };
+        _sprite = new Sprite(texture);
+        _sprite.CenterOrigin();
+        _sprite.Scale = new Vector2(scale);
     }
 
     public override void Draw()

@@ -211,6 +211,7 @@ public class Paddle
         {
             collectibleType.SPEED_UP => PaddleState.FAST,
             collectibleType.SPEED_DOWN => PaddleState.SLOW,
+            collectibleType.STICKY => PaddleState.STICKY,
             _ => PaddleState.NORMAL
         };
         _powerUpTimer = POWER_UP_TIME_DURATION;
@@ -219,6 +220,13 @@ public class Paddle
 
     public void setState(PaddleState newState)
     {
+        PaddleState oldState = _paddleState;
+
+        if(newState != PaddleState.STICKY && oldState == PaddleState.STICKY)
+        {
+            Ball.Detach();
+        }
+
         _paddleState = newState;
         UpdatePaddleSprite();
     }
@@ -230,6 +238,7 @@ public class Paddle
         {
             PaddleState.FAST => _fastPaddle,
             PaddleState.SLOW => _slowPaddle,
+            PaddleState.STICKY => _stickyPaddle,
             _ => _normalPaddle
 
         };
@@ -257,6 +266,15 @@ public class Paddle
         };
         _scale = new Vector2(scaleX, SCALE_Y);
         _paddleSprite.Scale = _scale;
+    }
+
+    public bool isSitcky()
+    {
+        if(_paddleState == PaddleState.STICKY)
+        {
+            return true;
+        }
+        return false;
     }
 
 }

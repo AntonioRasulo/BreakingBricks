@@ -29,8 +29,7 @@ public class PowerUpAnimation : Collectible
 
     public override void Update(GameTime gameTime)
     {
-        _position += VELOCITY_Y;
-
+        base.Update(gameTime);
         _animatedSprite.Update(gameTime);
     }
 

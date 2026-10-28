@@ -39,6 +39,8 @@ public class Ball
 
     private AttachedStatus _attachStatus;
 
+    private static bool _detach = false;
+
     public Ball(Vector2 paddlePosition, float paddleHeight, float dirX, AttachedStatus attachStatus)
     {
         _ballSprite = new Sprite(whiteTexture)
@@ -128,6 +130,11 @@ public class Ball
 
                 _velocity = new Vector2(directionX, -1) * _movementSpeed;
 
+                _attachStatus = AttachedStatus.FREE;
+            }
+
+            if(_detach)
+            {
                 _attachStatus = AttachedStatus.FREE;
             }
         }
@@ -313,6 +320,21 @@ public class Ball
     public Vector2 getPosition()
     {
         return _position;
+    }
+
+    public void Attach()
+    {
+        _attachStatus = AttachedStatus.ATTACHED;
+    }
+
+    public static void Detach()
+    {
+        _detach = true;
+    }
+
+    public static void ResetDetach()
+    {
+        _detach = false;
     }
 
 }

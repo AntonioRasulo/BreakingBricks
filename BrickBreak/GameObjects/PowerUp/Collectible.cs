@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using MonoGameLibrary;
 
 namespace BrickBreak.GameObjects;
 
@@ -6,7 +7,8 @@ public enum collectibleType
 {
     NONE,
     SPEED_UP,
-    SPEED_DOWN
+    SPEED_DOWN,
+    STICKY
 }
 
 public abstract class Collectible
@@ -22,7 +24,14 @@ public abstract class Collectible
         _type = type;
     }
 
-    public abstract void Update(GameTime gameTime);
+    public virtual void Update(GameTime gameTime)
+    {
+        int screenHeight = Core.GraphicsDevice.PresentationParameters.BackBufferHeight;
+        if(getBounds().Top <= screenHeight)
+        {
+            _position += VELOCITY_Y;
+        }
+    }
 
     public abstract void Draw();
 

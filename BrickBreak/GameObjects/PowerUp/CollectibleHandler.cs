@@ -4,6 +4,7 @@ using MonoGameLibrary;
 using MonoGameLibrary.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace BrickBreak.GameObjects;
 
@@ -18,11 +19,13 @@ public class CollectibleHandler
 
     public static Animation _speedUpAnimation;
     public static Animation _speedDownAnimation;
+    public static Texture2D _stickySprite;
 
     private static SoundEffect _collectSound;
 
-    private const int SPEED_UP_PROB = 50; // 5%
-    private const int SPEED_DOWN_PROB = 100;
+    private const int SPEED_UP_PROB = 33;
+    private const int SPEED_DOWN_PROB = 66;
+    private const int STICKY_PROB = 100;
 
     public CollectibleHandler()
     {
@@ -40,6 +43,7 @@ public class CollectibleHandler
 
         _speedUpAnimation = speedUpAtlas.GetAnimation("speedup-bonus-animation");
         _speedDownAnimation = speedDownAtlas.GetAnimation("speeddown-bonus-animation");
+        _stickySprite = Core.Content.Load<Texture2D>("images/PowerUp/Sticky");
 
     }
 
@@ -68,7 +72,7 @@ public class CollectibleHandler
     static public void GenerateCollectible(Vector2 position)
     {
         int rand = _collectibleRand.Next(0, 100);
-        if (rand < SPEED_UP_PROB)
+                if (rand < SPEED_UP_PROB)
         {
             _collectibles.Add(new PowerUpAnimation(position, collectibleType.SPEED_UP, 2.0f, (float)(Math.PI * 0.5f)));
         }
@@ -76,10 +80,10 @@ public class CollectibleHandler
         {
             _collectibles.Add(new PowerUpAnimation(position, collectibleType.SPEED_DOWN, 2.0f));
         }
-        // else if (rand < PlayerStatsManager.currentStats.InvincibilityProb && rand > FREEZE_MAX_PROB)
-        // {
-        //     _collectibles.Add(new PowerUp(position, collectibleType.INVINCIBILITY));
-        // }
+        else if (rand < STICKY_PROB)
+        {
+            _collectibles.Add(new PowerUpSprite(position, collectibleType.STICKY, 0.3f));
+        }
         // else if (rand < PlayerStatsManager.currentStats.bombProbability && rand > INVINCIBILITY_MAX_PROB)
         // {
         //     _collectibles.Add(new PowerUp(position, collectibleType.BOMB));
