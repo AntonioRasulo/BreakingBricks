@@ -29,22 +29,22 @@ public static class SizeScale
 
 public class Paddle
 {
-    private Vector2 _position;
+    private static Vector2 _position;
 
-    private Vector2 _velocity;
+    private static Vector2 _velocity;
 
-    private Sprite _paddleSprite;
+    private static Sprite _paddleSprite;
 
-    private Texture2D _fastPaddle;
-    private Texture2D _goldenPaddle;
-    private Texture2D _magneticPaddle;
-    private Texture2D _normalPaddle;
-    private Texture2D _slowPaddle;
-    private Texture2D _stickyPaddle;
+    private static Texture2D _fastPaddle;
+    private static Texture2D _goldenPaddle;
+    private static Texture2D _magneticPaddle;
+    private static Texture2D _normalPaddle;
+    private static Texture2D _slowPaddle;
+    private static Texture2D _stickyPaddle;
 
     private const float SCALE_Y = 0.15f; 
 
-    private Vector2 _scale;
+    private static Vector2 _scale;
 
     private const float NORMAL_SPEED = 8f;
     private const float SLOW_SPEED = 6f;
@@ -52,16 +52,18 @@ public class Paddle
 
     private int _lives = 3;
 
-    private PaddleState _paddleState;
+    private static PaddleState _paddleState;
 
-    private Rectangle _roomBounds;
+    private static Rectangle _roomBounds;
 
     private float POWER_UP_TIME_DURATION = 10.0f;
-    private float _powerUpTimer = 0f;
+    private static float _powerUpTimer = 0f;
 
     private const float tweenTimeMs = 100;
-    private float _tweenTimer = 0f;
+    private static float _tweenTimer = 0f;
     private const int tweenPercentage = 10;
+
+    private static float _clampingXFactor = 360.0f;
 
     public Paddle(Rectangle roomBounds)
     {
@@ -95,7 +97,7 @@ public class Paddle
         _paddleSprite.CenterOrigin();
     }
 
-    public void Update(GameTime gameTime)
+    public static void Update(GameTime gameTime)
     {
 
         float direction = (float)Moving.IsMoving();
@@ -104,11 +106,15 @@ public class Paddle
 
         if(paddleBounds.Left <= _roomBounds.Left && direction < 0)
         {
+            float offset = _roomBounds.Left - paddleBounds.Left;
+            _position.X += offset;
             direction = 0.0f;
         }
 
         if(paddleBounds.Right >= _roomBounds.Right && direction > 0)
         {
+            float offset = paddleBounds.Right - _roomBounds.Right;
+            _position.X -= offset;
             direction = 0.0f;
         }
 
@@ -152,7 +158,7 @@ public class Paddle
         _paddleSprite.Draw(Core.SpriteBatch, _position);
     }
 
-    public Rectangle getBounds()
+    public static Rectangle getBounds()
     {
         // Creating a bounding rectangle for the paddle
         Rectangle bounds = new Rectangle(
@@ -170,7 +176,7 @@ public class Paddle
         return _velocity.X;
     }
 
-    public Vector2 getPosition()
+    public static Vector2 getPosition()
     {
         return _position;
     }
@@ -218,7 +224,7 @@ public class Paddle
         setState(newState);
     }
 
-    public void setState(PaddleState newState)
+    public static void setState(PaddleState newState)
     {
         PaddleState oldState = _paddleState;
 
@@ -231,7 +237,7 @@ public class Paddle
         UpdatePaddleSprite();
     }
 
-    private void UpdatePaddleSprite()
+    private static void UpdatePaddleSprite()
     {
 
         Texture2D newSprite = _paddleState switch
@@ -256,7 +262,7 @@ public class Paddle
         _paddleSprite.Scale = _scale;
     }
 
-    private void restoreScale()
+    private static void restoreScale()
     {
         float scaleX = _paddleState switch
         {
@@ -264,7 +270,7 @@ public class Paddle
             PaddleState.SMALL => SizeScale.SMALL,
             _ => SizeScale.NORMAL
         };
-        _scale = new Vector2(scaleX, SCALE_Y);
+        _scale = new Vector2(scaleX, SCALE_Y); 
         _paddleSprite.Scale = _scale;
     }
 
@@ -275,6 +281,11 @@ public class Paddle
             return true;
         }
         return false;
+    }
+
+    public static float getClampingXFactor()
+    {
+        return _clampingXFactor * _scale.X;
     }
 
 }

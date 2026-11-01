@@ -206,7 +206,7 @@ public class GameScene : Scene
         float initialPlatformPosX = Core.GraphicsDevice.PresentationParameters.BackBufferWidth * 0.1f;
         Vector2 initialPlatformPos = new Vector2(initialPlatformPosX, initialPlatformPosY);
 
-        _balls.Add(new Ball(_paddle.getPosition(), _paddle.getPaddleHeight(), _paddle.getDirection(), AttachedStatus.ATTACHED));
+        _balls.Add(new Ball(Paddle.getPosition(), _paddle.getPaddleHeight(), _paddle.getDirection(), AttachedStatus.ATTACHED));
 
         _platformRand = new Random();
 
@@ -285,7 +285,7 @@ public class GameScene : Scene
             return;
         }
 
-        _paddle.Update(gameTime);
+        Paddle.Update(gameTime);
 
         bool areAllBallsFree = true;
         foreach(Ball ball in _balls)
@@ -322,7 +322,7 @@ public class GameScene : Scene
 
         if((_balls.Count == 0) && (_paddle.isDead() == false))
         {
-            _balls.Add(new Ball(_paddle.getPosition(), _paddle.getBounds().Height, _paddle.getDirection(), AttachedStatus.ATTACHED));
+            _balls.Add(new Ball(Paddle.getPosition(), Paddle.getBounds().Height, _paddle.getDirection(), AttachedStatus.ATTACHED));
         }
 
         checkChangeScene();
@@ -379,7 +379,7 @@ public class GameScene : Scene
 
     private void CollisionChecks(GameTime gameTime)
     {
-        Rectangle paddleBounds = _paddle.getBounds();
+        Rectangle paddleBounds = Paddle.getBounds();
 
         foreach(Ball ball in _balls)
         {
@@ -392,16 +392,49 @@ public class GameScene : Scene
                 PartCollided sideColl = PartCollided.NONE;
                 (collision, sideColl) = areIntersecting(ballBounds, paddleBounds);
 
-                if(collision)
+                if(collision && (ball.getPosition().Y < paddleBounds.Y))
                 {
-                    ball.CalculateBallBounce(paddleBounds, true);
+                    Vector2 ballPosition = ball.getPosition();
                     if(_paddle.isSitcky())
                     {
                         ball.Attach();
+                        bool posChanged = false;
+                        if(ballBounds.Bottom > paddleBounds.Top)
+                        {
+                            ballPosition.Y -= ballBounds.Bottom - paddleBounds.Top;
+                            posChanged = true;
+                        }
+                        if(ballBounds.Left < paddleBounds.Right && ballBounds.Right > paddleBounds.Right)
+                        {
+                            ballPosition.X += paddleBounds.Right - ballBounds.Left;
+                            posChanged = true;
+                        }
+                        if(ballBounds.Right > paddleBounds.Left && ballBounds.Left < ballBounds.Left)
+                        {
+                            ballPosition.X -= ballBounds.Right - paddleBounds.Left;
+                            posChanged = true;
+                        }
+                        if(posChanged == true)
+                        {
+                            float distanceX = Math.Abs(ballPosition.X - Paddle.getPosition().X);
+                            float clampingXFactor = Paddle.getClampingXFactor();
+                            if(distanceX > clampingXFactor)
+                            {
+                                if(ballPosition.X > Paddle.getPosition().X)
+                                {
+                                    ballPosition.X = Paddle.getPosition().X + clampingXFactor;
+                                }
+                                else
+                                {
+                                    ballPosition.X = Paddle.getPosition().X - clampingXFactor;
+                                }
+                            }
+                            ball.setPosition(ballPosition);
+                        }
                     }
                     else
                     {
-                        Vector2 ballPosition = ball.getPosition();
+                        ball.CalculateBallBounce(paddleBounds, true);
                         _lastBallPaddleCollTime = gameTime.TotalGameTime;
                         _pausedTime = TimeSpan.Zero;
                         _smokeAnimations.Add(new Smoke(ballPosition));
