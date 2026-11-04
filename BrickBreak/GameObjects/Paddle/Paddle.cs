@@ -219,6 +219,7 @@ public class Paddle
             collectibleType.SPEED_DOWN => PaddleState.SLOW,
             collectibleType.STICKY => PaddleState.STICKY,
             collectibleType.ENLARGE => PaddleState.BIG,
+            collectibleType.SHRINK => PaddleState.SMALL,
             _ => PaddleState.NORMAL
         };
         _powerUpTimer = POWER_UP_TIME_DURATION;
@@ -245,10 +246,13 @@ public class Paddle
         {
             PaddleState.FAST => _fastPaddle,
             PaddleState.SLOW => _slowPaddle,
-            PaddleState.STICKY => _stickyPaddle,
+            PaddleState.STICKY =>_stickyPaddle,
             _ => _normalPaddle
 
         };
+        
+        restoreScale();
+
         _paddleSprite.SetRegion(newSprite);
     }
 

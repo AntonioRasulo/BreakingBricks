@@ -9,7 +9,8 @@ public enum collectibleType
     SPEED_UP,
     SPEED_DOWN,
     STICKY,
-    ENLARGE
+    ENLARGE,
+    SHRINK
 }
 
 public abstract class Collectible

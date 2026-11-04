@@ -22,6 +22,7 @@ public class CollectibleHandler
     public static Animation _speedDownAnimation;
     public static Texture2D _stickySprite;
     public static Texture2D _enlargeSprite;
+    public static Texture2D _shrinkSprite;
 
     private static SoundEffect _collectSound;
 
@@ -50,6 +51,7 @@ public class CollectibleHandler
         _speedDownAnimation = speedDownAtlas.GetAnimation("speeddown-bonus-animation");
         _stickySprite = Core.Content.Load<Texture2D>("images/PowerUp/Sticky");
         _enlargeSprite = Core.Content.Load<Texture2D>("images/PowerUp/Blue two sides arrow Black outline");
+        _shrinkSprite = Core.Content.Load<Texture2D>("images/PowerUp/BlueTwoSidedArrowInverted");
 
         _marbleBagContent =
         [
@@ -57,13 +59,8 @@ public class CollectibleHandler
             collectibleType.SPEED_DOWN,
             collectibleType.STICKY,
             collectibleType.ENLARGE,
+            collectibleType.SHRINK,
             collectibleType.NONE,
-            collectibleType.NONE,
-            collectibleType.NONE,
-            collectibleType.SPEED_UP,
-            collectibleType.SPEED_DOWN,
-            collectibleType.STICKY,
-            collectibleType.ENLARGE,
             collectibleType.NONE,
             collectibleType.NONE,
             collectibleType.NONE,
@@ -71,6 +68,17 @@ public class CollectibleHandler
             collectibleType.SPEED_DOWN,
             collectibleType.STICKY,
             collectibleType.ENLARGE,
+            collectibleType.SHRINK,
+            collectibleType.NONE,
+            collectibleType.NONE,
+            collectibleType.NONE,
+            collectibleType.NONE,
+            collectibleType.SPEED_UP,
+            collectibleType.SPEED_DOWN,
+            collectibleType.STICKY,
+            collectibleType.ENLARGE,
+            collectibleType.SHRINK,
+            collectibleType.NONE,
             collectibleType.NONE,
             collectibleType.NONE,
             collectibleType.NONE
@@ -113,10 +121,13 @@ public class CollectibleHandler
                 _collectibles.Add(new PowerUpAnimation(position, collectibleType.SPEED_DOWN, 2.0f));
             break;
             case collectibleType.STICKY:
-                _collectibles.Add(new PowerUpSprite(position, collectibleType.STICKY, 0.3f));
+                _collectibles.Add(new PowerUpSprite(position, collectibleType.STICKY, 0.3f, 0.3f));
             break;
             case collectibleType.ENLARGE:
-                _collectibles.Add(new PowerUpSprite(position, collectibleType.ENLARGE, 0.35f));
+                _collectibles.Add(new PowerUpSprite(position, collectibleType.ENLARGE, 0.2f, 0.35f));
+            break;
+            case collectibleType.SHRINK:
+                _collectibles.Add(new PowerUpSprite(position, collectibleType.SHRINK, 0.2f, 0.35f));
             break;
         }
     }
