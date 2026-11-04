@@ -5,6 +5,7 @@ using MonoGameLibrary.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using BrickBreak.Utility;
 
 namespace BrickBreak.GameObjects;
 
@@ -27,6 +28,9 @@ public class CollectibleHandler
     private const int SPEED_DOWN_PROB = 66;
     private const int STICKY_PROB = 100;
 
+    private static collectibleType[] _marbleBagContent;
+    private static MarbleBag<collectibleType> _marbleBag;
+
     public CollectibleHandler()
     {
         LoadContent();
@@ -44,6 +48,26 @@ public class CollectibleHandler
         _speedUpAnimation = speedUpAtlas.GetAnimation("speedup-bonus-animation");
         _speedDownAnimation = speedDownAtlas.GetAnimation("speeddown-bonus-animation");
         _stickySprite = Core.Content.Load<Texture2D>("images/PowerUp/Sticky");
+
+        _marbleBagContent =
+        [
+            collectibleType.SPEED_UP,
+            collectibleType.SPEED_DOWN,
+            collectibleType.STICKY,
+            collectibleType.NONE,
+            collectibleType.NONE,
+            collectibleType.SPEED_UP,
+            collectibleType.SPEED_DOWN,
+            collectibleType.STICKY,
+            collectibleType.NONE,
+            collectibleType.NONE,
+            collectibleType.SPEED_UP,
+            collectibleType.SPEED_DOWN,
+            collectibleType.STICKY,
+            collectibleType.NONE,
+            collectibleType.NONE
+        ];
+        _marbleBag = new MarbleBag<collectibleType>(_marbleBagContent);
 
     }
 
@@ -71,35 +95,19 @@ public class CollectibleHandler
 
     static public void GenerateCollectible(Vector2 position)
     {
-        int rand = _collectibleRand.Next(0, 100);
-                if (rand < SPEED_UP_PROB)
+        collectibleType generatedType = _marbleBag.Next;
+        switch (generatedType)
         {
-            _collectibles.Add(new PowerUpAnimation(position, collectibleType.SPEED_UP, 2.0f, (float)(Math.PI * 0.5f)));
+            case collectibleType.SPEED_UP:
+                _collectibles.Add(new PowerUpAnimation(position, collectibleType.SPEED_UP, 2.0f, (float)(Math.PI * 0.5f)));
+            break;
+            case collectibleType.SPEED_DOWN:
+                _collectibles.Add(new PowerUpAnimation(position, collectibleType.SPEED_DOWN, 2.0f));
+            break;
+            case collectibleType.STICKY:
+                _collectibles.Add(new PowerUpSprite(position, collectibleType.STICKY, 0.3f));
+            break;
         }
-        else if (rand < SPEED_DOWN_PROB)
-        {
-            _collectibles.Add(new PowerUpAnimation(position, collectibleType.SPEED_DOWN, 2.0f));
-        }
-        else if (rand < STICKY_PROB)
-        {
-            _collectibles.Add(new PowerUpSprite(position, collectibleType.STICKY, 0.3f));
-        }
-        // else if (rand < PlayerStatsManager.currentStats.bombProbability && rand > INVINCIBILITY_MAX_PROB)
-        // {
-        //     _collectibles.Add(new PowerUp(position, collectibleType.BOMB));
-        // }
-        // else if (rand < GOLD_COIN_PROB && rand > BOMB_MAX_PROB)
-        // {
-        //     _collectibles.Add(new Coin(position, collectibleType.GOLD_COIN));
-        // }
-        // else if (rand < SILVER_COIN_PROB && rand > GOLD_COIN_PROB)
-        // {
-        //     _collectibles.Add(new Coin(position, collectibleType.SILVER_COIN));
-        // }
-        // else if(rand < BRONZE_COIN_PROB && rand > SILVER_COIN_PROB)
-        // {
-        //     _collectibles.Add(new Coin(position, collectibleType.BRONZE_COIN));
-        // }
     }
 
     public static collectibleType CheckPaddleCollision(Rectangle charBounds)
@@ -125,6 +133,11 @@ public class CollectibleHandler
     public static void PlayCollectibleSound()
     {
         //Core.Audio.PlaySoundEffect(_collectSound);
+    }
+
+    public static void ResetMarbleBag()
+    {
+        _marbleBag.Reset(_marbleBagContent);
     }
 
 }

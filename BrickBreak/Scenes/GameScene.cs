@@ -660,6 +660,7 @@ public class GameScene : Scene
     {
 //        _balls.Clear();
         _bricks.Clear();
+        CollectibleHandler.ResetMarbleBag();
 
         foreach(var row in config.Bricks)
         {
