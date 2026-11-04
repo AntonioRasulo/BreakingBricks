@@ -19,6 +19,7 @@ public class TitleScreenButtonsPanel : PangPanel
     private AnimatedButton _optionsButton;
     private AnimatedButton _startButton;
     private AnimatedButton _creditsButton;
+    private AnimatedButton _quitButton;
 
     // The font used to render the title text.
     private SpriteFont _font5x;
@@ -36,13 +37,13 @@ public class TitleScreenButtonsPanel : PangPanel
         _creditsButton.Anchor(Gum.Wireframe.Anchor.BottomLeft);
         _creditsButton.Width = 50;
         _creditsButton.Text = "Credits";
-        _creditsButton.Y = -12;
+        _creditsButton.Y = -18;
         _creditsButton.Click += TitlePanelManager.HandleCreditsClicked;
         _panel.AddChild(_creditsButton);
 
         _startButton = new AnimatedButton(_GUIatlas);
         _startButton.Anchor(Gum.Wireframe.Anchor.Bottom);
-        _startButton.Y = -12;
+        _startButton.Y = -18;
         _startButton.Width = 50;
         _startButton.Text = "Start";
         _startButton.Click += TitlePanelManager.HandleStartClicked;
@@ -50,11 +51,21 @@ public class TitleScreenButtonsPanel : PangPanel
 
         _optionsButton = new AnimatedButton(_GUIatlas);
         _optionsButton.Anchor(Gum.Wireframe.Anchor.BottomRight);
-        _optionsButton.Y = -12;
+        _optionsButton.Y = -18;
         _optionsButton.Width = 50;
         _optionsButton.Text = "Options";
         _optionsButton.Click += TitlePanelManager.HandleOptionsClicked;
         _panel.AddChild(_optionsButton);
+
+        _quitButton = new AnimatedButton(_GUIatlas);
+        _quitButton.Anchor(Gum.Wireframe.Anchor.BottomRight);
+        _quitButton.Y = -3;
+        _quitButton.X = -22;
+        _quitButton.Width = 25;
+        _quitButton.Text = "Quit";
+        _quitButton.ChangeTextColor(Color.Red);
+        _quitButton.Click += TitlePanelManager.HandleQuitButtonClicked;
+        _panel.AddChild(_quitButton);
 
         // Load the font for the title text.
         _font5x = Core.Content.Load<SpriteFont>("fonts/bricksFonts/bricks");

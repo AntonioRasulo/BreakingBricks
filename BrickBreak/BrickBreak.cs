@@ -3,11 +3,15 @@ using BrickBreak.Scenes;
 using MonoGameGum;
 using Gum.Forms;
 using Gum.Forms.Controls;
+using Microsoft.Xna.Framework;
+using System;
 
 namespace BrickBreak;
 
 public class Game1 : Core
 {
+    public static bool exitGame = false;
+
     public Game1() : base("BrickBreak", 1280, 720, false)
     {
     }
@@ -27,6 +31,12 @@ public class Game1 : Core
     {
         // Allow the Core class to also load content.
         base.LoadContent();
+    }
+
+    protected override void Update(GameTime gameTime)
+    {
+        if(exitGame) Exit();
+        base.Update(gameTime);
     }
 
     private void InitializeGum()

@@ -4,6 +4,7 @@ using BrickBreak.Scenes;
 using System;
 using BrickBreak.GameObjects;
 using BrickBreak.Config;
+using Microsoft.Xna.Framework;
 
 namespace BrickBreak.UI;
 
@@ -46,6 +47,11 @@ public class TitlePanelManager
         // Set the options panel to be visible.
         _optionsPanel.SetIsVisible(true);
 
+    }
+
+    public static void HandleQuitButtonClicked(object sender, EventArgs e)
+    {
+        Game1.exitGame = true;
     }
 
     public static void HandleOptionsButtonBack(object sender, EventArgs e)
