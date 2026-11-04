@@ -9,12 +9,13 @@ public class PowerUpSprite : Collectible
 {
     private Sprite _sprite;
 
-    public PowerUpSprite(Vector2 position, collectibleType type, float scale):
+    public PowerUpSprite(Vector2 position, collectibleType type, float scale = 1.0f):
     base(position, type)
     {
         Texture2D texture = type switch
         {
             collectibleType.STICKY => CollectibleHandler._stickySprite,
+            collectibleType.ENLARGE => CollectibleHandler._enlargeSprite,
             _ => null
         };
         _sprite = new Sprite(texture);
