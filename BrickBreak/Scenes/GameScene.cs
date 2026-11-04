@@ -542,6 +542,8 @@ public class GameScene : Scene
         if (_state != GameState.Playing)
         {
             spriteSortMode = SpriteSortMode.Deferred;
+            offSetX = 0.0f;
+            offSetY = 0.0f;
         }
 
         // Draw the background and tilemap
