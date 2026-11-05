@@ -7,7 +7,7 @@ namespace BrickBreak.GameObjects;
 
 public class PowerUpSprite : Collectible
 {
-    private Sprite _sprite;
+    protected Sprite _sprite;
 
     public PowerUpSprite(Vector2 position, collectibleType type, float scaleX = 1.0f, float scaleY = 1.0f):
     base(position, type)
@@ -16,7 +16,7 @@ public class PowerUpSprite : Collectible
         {
             collectibleType.STICKY => CollectibleHandler._stickySprite,
             collectibleType.ENLARGE => CollectibleHandler._enlargeSprite,
-            collectibleType.SHRINK => CollectibleHandler._shrinkSprite,
+            collectibleType.SHRINK => CollectibleHandler._enlargeSprite,
             _ => null
         };
         _sprite = new Sprite(texture);
