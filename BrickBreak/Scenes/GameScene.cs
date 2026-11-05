@@ -383,6 +383,7 @@ public class GameScene : Scene
 
         foreach(Ball ball in _balls)
         {
+            bool paddleBallCollision = false;
             if(ball.getAttachedStatus() == AttachedStatus.FREE)
             {
                 Circle ballBounds = ball.GetBounds();
@@ -394,6 +395,7 @@ public class GameScene : Scene
 
                 if(collision && (ball.getPosition().Y < paddleBounds.Y))
                 {
+                    paddleBallCollision = true;
                     Vector2 ballPosition = ball.getPosition();
                     if(_paddle.isSitcky())
                     {
@@ -472,15 +474,15 @@ public class GameScene : Scene
                         }
                     }
                 }
-            }
-        }
+            //}
+        //}
 
         /*Balls - walls collision*/
-        foreach(Ball ball in _balls)
-        {
-            if(ball.getAttachedStatus() == AttachedStatus.FREE)
-            {
-                Circle ballBounds = ball.GetBounds();
+        //foreach(Ball ball in _balls)
+        //{ /*Balls - walls collision*/
+            // if(ball.getAttachedStatus() == AttachedStatus.FREE)
+            // {
+                //Circle ballBounds = ball.GetBounds();
 
                 if (ballBounds.Top < _roomBounds.Top)
                 {
@@ -510,7 +512,31 @@ public class GameScene : Scene
                     ball.Bounce(-Vector2.UnitX);
                     _smokeAnimations.Add(new Smoke(ball.getPosition()));
                 }
+
+                /* Avoid ball entering in tilemap */
+                if(paddleBallCollision)
+                {
+                    Vector2 ballPos = ball.getPosition();
+                    bool posChanged = false;
+                    // Check if ball is inside tilemap
+                    if(ballBounds.Right < _roomBounds.Left)
+                    {
+                        ballPos.X = _roomBounds.Left + ballBounds.Radius;
+                        posChanged = true;
+                    }
+                    else if(ballBounds.Left> _roomBounds.Right)
+                    {
+                        ballPos.X = _roomBounds.Right - ballBounds.Radius;
+                        posChanged = true;
+                    }
+                    if(posChanged)
+                    {
+                        ballPos.Y -= ballBounds.Radius * 2;
+                    }
+                    ball.setPosition(ballPos);
+                }
             }
+            
         }
 
         /* Paddle - Collectible collision */
