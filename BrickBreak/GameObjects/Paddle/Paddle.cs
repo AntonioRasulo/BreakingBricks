@@ -220,6 +220,7 @@ public class Paddle
             collectibleType.STICKY => PaddleState.STICKY,
             collectibleType.ENLARGE => PaddleState.BIG,
             collectibleType.SHRINK => PaddleState.SMALL,
+            collectibleType.MAGNETIC => PaddleState.MAGNETIC,
             _ => PaddleState.NORMAL
         };
         _powerUpTimer = POWER_UP_TIME_DURATION;
@@ -247,6 +248,7 @@ public class Paddle
             PaddleState.FAST => _fastPaddle,
             PaddleState.SLOW => _slowPaddle,
             PaddleState.STICKY =>_stickyPaddle,
+            PaddleState.MAGNETIC => _magneticPaddle,
             _ => _normalPaddle
 
         };

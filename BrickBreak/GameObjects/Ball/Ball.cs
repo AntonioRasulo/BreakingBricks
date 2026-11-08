@@ -33,7 +33,7 @@ public class Ball
 
     public static Texture2D whiteTexture;
 
-    private Vector2 SCALE = new Vector2(0.04f, 0.04f);
+    private Vector2 SCALE = new Vector2(0.03f, 0.03f);
 
     public bool toRemove {get; set;}
 

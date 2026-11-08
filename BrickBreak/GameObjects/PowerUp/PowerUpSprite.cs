@@ -17,6 +17,7 @@ public class PowerUpSprite : Collectible
             collectibleType.STICKY => CollectibleHandler._stickySprite,
             collectibleType.ENLARGE => CollectibleHandler._enlargeSprite,
             collectibleType.SHRINK => CollectibleHandler._enlargeSprite,
+            collectibleType.MAGNETIC => CollectibleHandler._magneticSprite,
             _ => null
         };
         _sprite = new Sprite(texture);

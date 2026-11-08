@@ -22,6 +22,7 @@ public class CollectibleHandler
     public static Animation _speedDownAnimation;
     public static Texture2D _stickySprite;
     public static Texture2D _enlargeSprite;
+    public static Texture2D _magneticSprite;
 
     private static SoundEffect _collectSound;
 
@@ -50,6 +51,7 @@ public class CollectibleHandler
         _speedDownAnimation = speedDownAtlas.GetAnimation("speeddown-bonus-animation");
         _stickySprite = Core.Content.Load<Texture2D>("images/PowerUp/Sticky");
         _enlargeSprite = Core.Content.Load<Texture2D>("images/PowerUp/Blue two sides arrow Black outline");
+        _magneticSprite = Core.Content.Load<Texture2D>("images/PowerUp/Magnetic");
 
         _marbleBagContent =
         [
@@ -58,6 +60,7 @@ public class CollectibleHandler
             collectibleType.STICKY,
             collectibleType.ENLARGE,
             collectibleType.SHRINK,
+            collectibleType.MAGNETIC,
             collectibleType.NONE,
             collectibleType.NONE,
             collectibleType.NONE,
@@ -67,6 +70,7 @@ public class CollectibleHandler
             collectibleType.STICKY,
             collectibleType.ENLARGE,
             collectibleType.SHRINK,
+            collectibleType.MAGNETIC,
             collectibleType.NONE,
             collectibleType.NONE,
             collectibleType.NONE,
@@ -76,6 +80,7 @@ public class CollectibleHandler
             collectibleType.STICKY,
             collectibleType.ENLARGE,
             collectibleType.SHRINK,
+            collectibleType.MAGNETIC,
             collectibleType.NONE,
             collectibleType.NONE,
             collectibleType.NONE,
@@ -126,6 +131,9 @@ public class CollectibleHandler
             break;
             case collectibleType.SHRINK:
                 _collectibles.Add(new PowerUpSpriteShrinkable(position, collectibleType.SHRINK, true, 0.2f, 0.35f));
+            break;
+            case collectibleType.MAGNETIC:
+                _collectibles.Add(new PowerUpSprite(position, collectibleType.MAGNETIC, 0.3f, 0.3f));
             break;
         }
     }
