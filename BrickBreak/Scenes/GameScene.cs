@@ -187,6 +187,8 @@ public class GameScene : Scene
             screenBounds.Height
         );
 
+        Ball.setRoomBounds(_roomBounds);
+
         _paddle = new Paddle(_roomBounds);
         _paddle.LoadContent();
 

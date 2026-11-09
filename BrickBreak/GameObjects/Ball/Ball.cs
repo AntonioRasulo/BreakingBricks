@@ -40,6 +40,8 @@ public class Ball
     private AttachedStatus _attachStatus;
 
     private static bool _detach = false;
+    
+    private static Rectangle _roomBounds;
 
     public Ball(Vector2 paddlePosition, float paddleHeight, float dirX, AttachedStatus attachStatus)
     {
@@ -155,7 +157,21 @@ public class Ball
 
         if(_attachStatus == AttachedStatus.FREE)
         {
-            _position += _velocity;
+            if(Paddle.isMagnetic() && _position.Y > (_roomBounds.Height * 0.5f) && _velocity.Y > 0f)
+            {
+                Vector2 PaddlePos = Paddle.getPosition();
+
+                Vector2 direction = PaddlePos - _position;
+                float distance = direction.Length();
+                direction.Normalize();
+                //_velocity = direction * _movementSpeed;
+                _position += direction * _movementSpeed;
+
+            }
+            else
+            {
+                _position += _velocity;
+            }
         }
 
     }
@@ -354,6 +370,11 @@ public class Ball
     public static void ResetDetach()
     {
         _detach = false;
+    }
+
+    public static void setRoomBounds(Rectangle bounds)
+    {
+        _roomBounds = bounds;
     }
 
 }

@@ -290,6 +290,15 @@ public class Paddle
         return false;
     }
 
+    public static bool isMagnetic()
+    {
+        if(_paddleState == PaddleState.MAGNETIC)
+        {
+            return true;
+        }
+        return false;
+    }
+
     public static float getClampingXFactor()
     {
         return _clampingXFactor * _scale.X;
