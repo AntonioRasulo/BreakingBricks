@@ -443,7 +443,7 @@ public class GameScene : Scene
                         _pausedTime = TimeSpan.Zero;
                         _smokeAnimations.Add(new Smoke(ballPosition));
                         _paddle.startTweenScale();
-                        Vector2 collStrPos = new Vector2(ballPosition.X, ball.GetBounds().Top);
+                        Vector2 collStrPos = new(ballPosition.X, ball.GetBounds().Top);
                         _collStr = new CollisionString("Pow", collStrPos);
                     }
                 }

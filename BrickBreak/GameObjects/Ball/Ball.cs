@@ -152,19 +152,19 @@ public class Ball
             if(_detach)
             {
                 _attachStatus = AttachedStatus.FREE;
+                CalculateBallBounce(Paddle.getBounds(), true);
             }
         }
 
         if(_attachStatus == AttachedStatus.FREE)
         {
-            if(Paddle.isMagnetic() && _position.Y > (_roomBounds.Height * 0.5f) && _velocity.Y > 0f)
+            if(Paddle.isMagnetic() && _velocity.Y > 0f)
             {
                 Vector2 PaddlePos = Paddle.getPosition();
 
                 Vector2 direction = PaddlePos - _position;
                 float distance = direction.Length();
                 direction.Normalize();
-                //_velocity = direction * _movementSpeed;
                 _position += direction * _movementSpeed;
 
             }
@@ -309,11 +309,11 @@ public class Ball
         {
             if(_position.X > paddleBounds.X)
             {
-                _velocity = new Vector2(6.0f, -6.0f);
+                _velocity = new Vector2(_movementSpeed, -_movementSpeed);
             }
             else
             {
-                _velocity = new Vector2(-6.0f, -6.0f);
+                _velocity = new Vector2(-_movementSpeed, -_movementSpeed);
             }
 
         }
