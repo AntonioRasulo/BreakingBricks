@@ -12,16 +12,21 @@ public enum PaddleState
     NORMAL,
     MAGNETIC,
     STICKY,
-    GOLDEN,
-    BIG,
-    SMALL
+    GOLDEN
 }
 
-public enum  SpeedState
+public enum SpeedState
 {
-    NORMAL,
+    NORMAL_SPEED,
     FAST,
     SLOW
+}
+
+public enum SizeState
+{
+    NORMAL_SIZE,
+    BIG,
+    SMALL
 }
 
 public static class SizeScale
@@ -64,6 +69,7 @@ public class Paddle
     private float POWER_UP_TIME_DURATION = 10.0f;
     private static float _powerUpTimer = 0f;
     private static float _powerUpSpeedTimer = 0f;
+    private static float _powerUpSizeTimer = 0f;
 
     private const float tweenTimeMs = 100;
     private static float _tweenTimer = 0f;
@@ -72,11 +78,13 @@ public class Paddle
     private static float _clampingXFactor = 360.0f;
 
     private static SpeedState _speedState;
+    private static SizeState _sizeState;
 
     public Paddle(Rectangle roomBounds)
     {
         _paddleState = PaddleState.NORMAL;
-        _speedState = SpeedState.NORMAL;
+        _speedState = SpeedState.NORMAL_SPEED;
+        _sizeState = SizeState.NORMAL_SIZE;
 
         float windowHeight = Core.GraphicsDevice.PresentationParameters.BackBufferHeight;
         float windowWidth = Core.GraphicsDevice.PresentationParameters.BackBufferWidth;
@@ -154,7 +162,17 @@ public class Paddle
             if(_powerUpSpeedTimer <= 0)
             {
                 _powerUpSpeedTimer = 0;
-                setSpeedState(SpeedState.NORMAL);
+                setSpeedState(SpeedState.NORMAL_SPEED);
+            }
+        }
+
+        if(_powerUpSizeTimer > 0)
+        {
+            _powerUpSizeTimer -= delta;
+            if(_powerUpSizeTimer <= 0)
+            {
+                _powerUpSizeTimer = 0;
+                setSizeState(SizeState.NORMAL_SIZE);
             }
         }
 
@@ -235,8 +253,7 @@ public class Paddle
         PaddleState newState = type switch
         {
             collectibleType.STICKY => PaddleState.STICKY,
-            collectibleType.ENLARGE => PaddleState.BIG,
-            collectibleType.SHRINK => PaddleState.SMALL,
+           
             collectibleType.MAGNETIC => PaddleState.MAGNETIC,
             _ => PaddleState.NORMAL
         };
@@ -248,11 +265,22 @@ public class Paddle
             _ => _speedState
         };
 
+        _sizeState = type switch
+        {
+            collectibleType.ENLARGE => SizeState.BIG,
+            collectibleType.SHRINK => SizeState.SMALL,
+            _ => _sizeState
+        };
+
         switch(type)
         {
             case collectibleType.SPEED_UP:
             case collectibleType.SPEED_DOWN:
                 _powerUpSpeedTimer = POWER_UP_TIME_DURATION;
+            break;
+            case collectibleType.ENLARGE:
+            case collectibleType.SHRINK:
+                _powerUpSizeTimer = POWER_UP_TIME_DURATION;
             break;
             default:
                 _powerUpTimer = POWER_UP_TIME_DURATION;
@@ -278,6 +306,12 @@ public class Paddle
     private static void setSpeedState(SpeedState speedState)
     {
         _speedState = speedState;
+        UpdatePaddleSprite();
+    }
+
+    private static void setSizeState(SizeState sizeState)
+    {
+        _sizeState = sizeState;
         UpdatePaddleSprite();
     }
 
@@ -316,10 +350,10 @@ public class Paddle
 
     private static void restoreScale()
     {
-        float scaleX = _paddleState switch
+        float scaleX = _sizeState switch
         {
-            PaddleState.BIG => SizeScale.BIG,
-            PaddleState.SMALL => SizeScale.SMALL,
+            SizeState.BIG => SizeScale.BIG,
+            SizeState.SMALL => SizeScale.SMALL,
             _ => SizeScale.NORMAL
         };
         _scale = new Vector2(scaleX, SCALE_Y); 
