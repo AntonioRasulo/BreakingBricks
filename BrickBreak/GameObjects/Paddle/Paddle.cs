@@ -10,13 +10,18 @@ namespace BrickBreak.GameObjects;
 public enum PaddleState
 {
     NORMAL,
-    FAST,
-    SLOW,
     MAGNETIC,
     STICKY,
     GOLDEN,
     BIG,
     SMALL
+}
+
+public enum  SpeedState
+{
+    NORMAL,
+    FAST,
+    SLOW
 }
 
 public static class SizeScale
@@ -58,6 +63,7 @@ public class Paddle
 
     private float POWER_UP_TIME_DURATION = 10.0f;
     private static float _powerUpTimer = 0f;
+    private static float _powerUpSpeedTimer = 0f;
 
     private const float tweenTimeMs = 100;
     private static float _tweenTimer = 0f;
@@ -65,9 +71,12 @@ public class Paddle
 
     private static float _clampingXFactor = 360.0f;
 
+    private static SpeedState _speedState;
+
     public Paddle(Rectangle roomBounds)
     {
         _paddleState = PaddleState.NORMAL;
+        _speedState = SpeedState.NORMAL;
 
         float windowHeight = Core.GraphicsDevice.PresentationParameters.BackBufferHeight;
         float windowWidth = Core.GraphicsDevice.PresentationParameters.BackBufferWidth;
@@ -118,10 +127,10 @@ public class Paddle
             direction = 0.0f;
         }
 
-        _velocity = _paddleState switch
+        _velocity = _speedState switch
         {
-            PaddleState.FAST => new Vector2(direction * FAST_SPEED, 0f),
-            PaddleState.SLOW => new Vector2(direction * SLOW_SPEED, 0f),
+            SpeedState.FAST => new Vector2(direction * FAST_SPEED, 0f),
+            SpeedState.SLOW => new Vector2(direction * SLOW_SPEED, 0f),
             _ => new Vector2(direction * NORMAL_SPEED, 0f),
         };
 
@@ -136,6 +145,16 @@ public class Paddle
             {
                 _powerUpTimer = 0;
                 setState(PaddleState.NORMAL);
+            }
+        }
+
+        if(_powerUpSpeedTimer > 0)
+        {
+            _powerUpSpeedTimer -= delta;
+            if(_powerUpSpeedTimer <= 0)
+            {
+                _powerUpSpeedTimer = 0;
+                setSpeedState(SpeedState.NORMAL);
             }
         }
 
@@ -215,19 +234,35 @@ public class Paddle
     {
         PaddleState newState = type switch
         {
-            collectibleType.SPEED_UP => PaddleState.FAST,
-            collectibleType.SPEED_DOWN => PaddleState.SLOW,
             collectibleType.STICKY => PaddleState.STICKY,
             collectibleType.ENLARGE => PaddleState.BIG,
             collectibleType.SHRINK => PaddleState.SMALL,
             collectibleType.MAGNETIC => PaddleState.MAGNETIC,
             _ => PaddleState.NORMAL
         };
-        _powerUpTimer = POWER_UP_TIME_DURATION;
+
+        _speedState = type switch
+        {
+            collectibleType.SPEED_UP => SpeedState.FAST,
+            collectibleType.SPEED_DOWN => SpeedState.SLOW,
+            _ => _speedState
+        };
+
+        switch(type)
+        {
+            case collectibleType.SPEED_UP:
+            case collectibleType.SPEED_DOWN:
+                _powerUpSpeedTimer = POWER_UP_TIME_DURATION;
+            break;
+            default:
+                _powerUpTimer = POWER_UP_TIME_DURATION;
+            break;
+        }
+
         setState(newState);
     }
 
-    public static void setState(PaddleState newState)
+    private static void setState(PaddleState newState)
     {
         PaddleState oldState = _paddleState;
 
@@ -240,19 +275,29 @@ public class Paddle
         UpdatePaddleSprite();
     }
 
+    private static void setSpeedState(SpeedState speedState)
+    {
+        _speedState = speedState;
+        UpdatePaddleSprite();
+    }
+
     private static void UpdatePaddleSprite()
     {
 
         Texture2D newSprite = _paddleState switch
         {
-            PaddleState.FAST => _fastPaddle,
-            PaddleState.SLOW => _slowPaddle,
             PaddleState.STICKY =>_stickyPaddle,
             PaddleState.MAGNETIC => _magneticPaddle,
             _ => _normalPaddle
-
         };
-        
+
+        newSprite = _speedState switch
+        {
+            SpeedState.FAST => _fastPaddle,
+            SpeedState.SLOW => _slowPaddle,
+            _ => newSprite
+        };
+
         restoreScale();
 
         _paddleSprite.SetRegion(newSprite);
