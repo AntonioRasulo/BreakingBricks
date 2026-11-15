@@ -586,6 +586,18 @@
 /processorParam:TextureFormat=Color
 /build:images/paddles/paddle_golden_outline.png
 
+#begin images/paddles/paddle_magnetic_fast_outline.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/paddles/paddle_magnetic_fast_outline.png
+
 #begin images/paddles/paddle_magnetic_outline.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -597,6 +609,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:images/paddles/paddle_magnetic_outline.png
+
+#begin images/paddles/paddle_magnetic_slow_outline.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/paddles/paddle_magnetic_slow_outline.png
 
 #begin images/paddles/paddle_normal_outline.png
 /importer:TextureImporter

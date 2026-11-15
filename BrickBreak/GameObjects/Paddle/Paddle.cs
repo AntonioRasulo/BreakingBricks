@@ -101,6 +101,8 @@ public class Paddle
         Texture2D normalPaddle = Core.Content.Load<Texture2D>("images/paddles/paddle_normal_outline");
         Texture2D slowPaddle = Core.Content.Load<Texture2D>("images/paddles/paddle_slow_outline");
         Texture2D stickyPaddle = Core.Content.Load<Texture2D>("images/paddles/paddle_sticky_outline");
+        Texture2D magneticFastPaddle = Core.Content.Load<Texture2D>("images/paddles/paddle_magnetic_fast_outline");
+        Texture2D magneticSlowPaddle = Core.Content.Load<Texture2D>("images/paddles/paddle_magnetic_slow_outline");
 
         _textureDict = new Dictionary<SpecialState, Dictionary<SpeedState, Texture2D>>
         {
@@ -114,8 +116,8 @@ public class Paddle
             {SpecialState.MAGNETIC, new Dictionary<SpeedState, Texture2D>
             {
                 {SpeedState.NORMAL_SPEED, magneticPaddle},
-                {SpeedState.FAST, fastPaddle}, // To replace with magnetic+fast paddle
-                {SpeedState.SLOW, slowPaddle}  // To replace with magnetic+slow paddle
+                {SpeedState.FAST, magneticFastPaddle},
+                {SpeedState.SLOW, magneticSlowPaddle}
             }
             },
             {SpecialState.STICKY, new Dictionary<SpeedState, Texture2D>
