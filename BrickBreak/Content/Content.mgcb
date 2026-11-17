@@ -646,6 +646,18 @@
 /processorParam:TextureFormat=Color
 /build:images/paddles/paddle_slow_outline.png
 
+#begin images/paddles/paddle_sticky_fast_outline.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/paddles/paddle_sticky_fast_outline.png
+
 #begin images/paddles/paddle_sticky_outline.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -657,6 +669,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:images/paddles/paddle_sticky_outline.png
+
+#begin images/paddles/paddle_sticky_slow_outline.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/paddles/paddle_sticky_slow_outline.png
 
 #begin images/PowerUp/Blue two sides arrow Black outline.png
 /importer:TextureImporter
