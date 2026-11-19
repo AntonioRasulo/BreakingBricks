@@ -11,7 +11,9 @@ public enum collectibleType
     STICKY,
     ENLARGE,
     SHRINK,
-    MAGNETIC
+    MAGNETIC,
+    BALL_SPLIT,
+    BALL_FIRE
 }
 
 public abstract class Collectible

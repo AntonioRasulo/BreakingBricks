@@ -15,6 +15,7 @@ public class PowerUpAnimation : Collectible
         {
             collectibleType.SPEED_UP => CollectibleHandler._speedUpAnimation,
             collectibleType.SPEED_DOWN => CollectibleHandler._speedDownAnimation,
+            collectibleType.BALL_SPLIT => CollectibleHandler._ballSplitPowerAnimation,
             _ => null
         };
 

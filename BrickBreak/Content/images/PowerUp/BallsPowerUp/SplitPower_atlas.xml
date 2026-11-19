@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas>
+    <Texture>images/PowerUp/BallsPowerUp/GlowingBall Blue 22frames RPG</Texture>
+    <Regions>
+        <Region name="ball1" x="37" y="37" width="117" height="115" />
+        <Region name="ball2" x="225" y="37" width="117" height="115" />
+        <Region name="ball3" x="416" y="37" width="117" height="115" />
+        <Region name="ball4" x="609" y="37" width="117" height="115" />
+        <Region name="ball5" x="806" y="37" width="117" height="115" />
+        <Region name="ball6" x="37" y="231" width="117" height="115" />
+        <Region name="ball7" x="225" y="231" width="117" height="115" />
+        <Region name="ball8" x="416" y="231" width="117" height="115" />
+        <Region name="ball9" x="609" y="231" width="117" height="115" />
+        <Region name="ball10" x="806" y="231" width="117" height="115" />
+        <Region name="ball11" x="37" y="425" width="117" height="115" />
+        <Region name="ball12" x="225" y="425" width="117" height="115" />
+        <Region name="ball13" x="416" y="425" width="117" height="115" />
+        <Region name="ball14" x="609" y="425" width="117" height="115" />
+        <Region name="ball15" x="806" y="425" width="117" height="115" />
+        <Region name="ball16" x="37" y="613" width="117" height="115" />
+        <Region name="ball17" x="225" y="613" width="117" height="115" />
+        <Region name="ball18" x="416" y="613" width="117" height="115" />
+        <Region name="ball19" x="609" y="613" width="117" height="115" />
+        <Region name="ball20" x="806" y="613" width="117" height="115" />
+        <Region name="ball21" x="37" y="805" width="117" height="115" />
+        <Region name="ball22" x="225" y="805" width="117" height="115" />
+    </Regions>
+    <Animations>
+        <Animation name="ball_glowing_animation" delay="25">
+            <Frame region="ball1" />
+            <Frame region="ball2" />
+            <Frame region="ball3" />
+            <Frame region="ball4" />
+            <Frame region="ball5" />
+            <Frame region="ball6" />
+            <Frame region="ball7" />
+            <Frame region="ball8" />
+            <Frame region="ball9" />
+            <Frame region="ball10" />
+            <Frame region="ball11" />
+            <Frame region="ball12" />
+            <Frame region="ball13" />
+            <Frame region="ball14" />
+            <Frame region="ball15" />
+            <Frame region="ball16" />
+            <Frame region="ball17" />
+            <Frame region="ball18" />
+            <Frame region="ball19" />
+            <Frame region="ball20" />
+            <Frame region="ball21" />
+            <Frame region="ball22" />
+        </Animation>
+    </Animations>
+</TextureAtlas>

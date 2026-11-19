@@ -20,6 +20,7 @@ public class CollectibleHandler
 
     public static Animation _speedUpAnimation;
     public static Animation _speedDownAnimation;
+    public static Animation _ballSplitPowerAnimation;
     public static Texture2D _stickySprite;
     public static Texture2D _enlargeSprite;
     public static Texture2D _magneticSprite;
@@ -46,12 +47,14 @@ public class CollectibleHandler
 
         TextureAtlas speedUpAtlas = TextureAtlas.FromFile(Core.Content, "images/PowerUp/SpeedUp/SpeedUpAtlas.xml");
         TextureAtlas speedDownAtlas = TextureAtlas.FromFile(Core.Content, "images/PowerUp/SpeedDown/SpeedDownAtlas.xml");
+        TextureAtlas splitBallAtlas = TextureAtlas.FromFile(Core.Content, "images/PowerUp/BallsPowerUp/SplitPower_atlas.xml");
 
         _speedUpAnimation = speedUpAtlas.GetAnimation("speedup-bonus-animation");
         _speedDownAnimation = speedDownAtlas.GetAnimation("speeddown-bonus-animation");
         _stickySprite = Core.Content.Load<Texture2D>("images/PowerUp/Sticky");
         _enlargeSprite = Core.Content.Load<Texture2D>("images/PowerUp/Blue two sides arrow Black outline");
         _magneticSprite = Core.Content.Load<Texture2D>("images/PowerUp/Magnetic");
+        _ballSplitPowerAnimation = splitBallAtlas.GetAnimation("ball_glowing_animation");
 
         _marbleBagContent =
         [
@@ -67,16 +70,8 @@ public class CollectibleHandler
             collectibleType.MAGNETIC,
             collectibleType.NONE,
             collectibleType.NONE,
-            collectibleType.SPEED_UP,
-            collectibleType.SPEED_DOWN,
-            collectibleType.NONE,
-            collectibleType.NONE,
-            collectibleType.STICKY,
-            collectibleType.ENLARGE,
-            collectibleType.NONE,
-            collectibleType.NONE,
-            collectibleType.SHRINK,
-            collectibleType.MAGNETIC,
+            collectibleType.BALL_SPLIT,
+            collectibleType.BALL_FIRE,
             collectibleType.NONE,
             collectibleType.NONE,
             collectibleType.SPEED_UP,
@@ -89,6 +84,26 @@ public class CollectibleHandler
             collectibleType.NONE,
             collectibleType.SHRINK,
             collectibleType.MAGNETIC,
+            collectibleType.NONE,
+            collectibleType.NONE,
+            collectibleType.BALL_SPLIT,
+            collectibleType.BALL_FIRE,
+            collectibleType.NONE,
+            collectibleType.NONE,
+            collectibleType.SPEED_UP,
+            collectibleType.SPEED_DOWN,
+            collectibleType.NONE,
+            collectibleType.NONE,
+            collectibleType.STICKY,
+            collectibleType.ENLARGE,
+            collectibleType.NONE,
+            collectibleType.NONE,
+            collectibleType.SHRINK,
+            collectibleType.MAGNETIC,
+            collectibleType.NONE,
+            collectibleType.NONE,
+            collectibleType.BALL_SPLIT,
+            collectibleType.BALL_FIRE,
             collectibleType.NONE,
             collectibleType.NONE
         ];
@@ -140,6 +155,9 @@ public class CollectibleHandler
             break;
             case collectibleType.MAGNETIC:
                 _collectibles.Add(new PowerUpSprite(position, collectibleType.MAGNETIC, 0.3f, 0.3f));
+            break;
+            case collectibleType.BALL_SPLIT:
+                _collectibles.Add(new PowerUpAnimation(position, collectibleType.BALL_SPLIT, 0.3f));
             break;
         }
     }

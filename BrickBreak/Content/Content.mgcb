@@ -682,6 +682,21 @@
 /processorParam:TextureFormat=Color
 /build:images/paddles/paddle_sticky_slow_outline.png
 
+#begin images/PowerUp/BallsPowerUp/GlowingBall Blue 22frames RPG.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:images/PowerUp/BallsPowerUp/GlowingBall Blue 22frames RPG.png
+
+#begin images/PowerUp/BallsPowerUp/SplitPower_atlas.xml
+/copy:images/PowerUp/BallsPowerUp/SplitPower_atlas.xml
+
 #begin images/PowerUp/Blue two sides arrow Black outline.png
 /importer:TextureImporter
 /processor:TextureProcessor
