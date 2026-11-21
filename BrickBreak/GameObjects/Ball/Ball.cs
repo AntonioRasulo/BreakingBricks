@@ -13,14 +13,6 @@ public enum AttachedStatus
     FREE
 }
 
-public enum PartCollided
-{
-    NONE,
-    SIDEX,
-    SIDEY,
-    ANGLE
-}
-
 public class Ball
 {
     private Vector2 _position;
@@ -60,14 +52,30 @@ public class Ball
             dirX = 1;
         }
 
-        Vector2 direction = new Vector2(dirX, -1);
+        Vector2 direction = new(dirX, -1);
 
         _velocity = direction * _movementSpeed;
 
         toRemove = false;
 
         _attachStatus = attachStatus;
+    }
 
+    public Ball(Vector2 ballPos, float dirX, float dirY)
+    {
+        _ballSprite = new Sprite(whiteTexture)
+        {
+            Scale = SCALE
+        };
+        _ballSprite.CenterOrigin();
+        _position = ballPos;
+
+        Vector2 direction = new(dirX, dirY);
+        _velocity = direction * _movementSpeed;
+
+        toRemove = false;
+
+        _attachStatus = AttachedStatus.FREE;
     }
 
     public void Bounce(Vector2 normal, bool fromPaddle = false, float angle = 45)
@@ -375,6 +383,11 @@ public class Ball
     public static void setRoomBounds(Rectangle bounds)
     {
         _roomBounds = bounds;
+    }
+
+    public Vector2 getDirection()
+    {
+        return new Vector2(_velocity.X / Math.Abs(_velocity.X), _velocity.Y / Math.Abs(_velocity.Y));
     }
 
 }

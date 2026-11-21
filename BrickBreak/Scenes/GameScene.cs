@@ -49,7 +49,6 @@ public class GameScene : Scene
     private const float FADE_SPEED = 0.02f;
 
     private List<Background> _levelBackground;
-    private List<Ball> _balls;
 
     private Random _platformRand;
 
@@ -136,7 +135,7 @@ public class GameScene : Scene
 
         // Create the game scene ui instance.
         _ui = new GameSceneUI();
-        _ui.UpdateLivesText(_paddle.getLives());
+        _ui.UpdateLivesText(Paddle.getLives());
 
         // Subscribe to the events from the game scene ui.
         _ui.ResumeButtonClick += OnResumeButtonClicked;
@@ -198,7 +197,6 @@ public class GameScene : Scene
         Smoke.LoadContent();
         CollisionString.LoadContent();
 
-        _balls = new List<Ball>();
         _bricks = new List<Brick>();
         _smokeAnimations = new List<Smoke>();
         _collStr = null;
@@ -208,7 +206,7 @@ public class GameScene : Scene
         float initialPlatformPosX = Core.GraphicsDevice.PresentationParameters.BackBufferWidth * 0.1f;
         Vector2 initialPlatformPos = new Vector2(initialPlatformPosX, initialPlatformPosY);
 
-        _balls.Add(new Ball(Paddle.getPosition(), _paddle.getPaddleHeight(), _paddle.getDirection(), AttachedStatus.ATTACHED));
+        BallsHandler.LoadContent();
 
         _platformRand = new Random();
 
@@ -289,19 +287,7 @@ public class GameScene : Scene
 
         Paddle.Update(gameTime);
 
-        bool areAllBallsFree = true;
-        foreach(Ball ball in _balls)
-        {
-            ball.Update(gameTime, _paddle.getVelocity());
-            if(ball.getAttachedStatus() == AttachedStatus.ATTACHED)
-            {
-                areAllBallsFree = false;
-            }
-        }
-        if(areAllBallsFree)
-        {
-            Ball.ResetDetach();
-        }
+        BallsHandler.Update(gameTime);
 
         CollectibleHandler.Update(gameTime);
 
@@ -318,13 +304,14 @@ public class GameScene : Scene
         CollisionChecks(gameTime);
 
         _bricks.RemoveAll(brick => brick.IsToRemove());
-        _balls.RemoveAll(ball => ball.toRemove);
+        BallsHandler.RemoveBalls();
+        _ui.UpdateLivesText(Paddle.getLives());
 
         Moving.updatePrevInputState();
 
-        if((_balls.Count == 0) && (_paddle.isDead() == false))
+        if((BallsHandler.GetBallsCount() == 0) && (_paddle.isDead() == false))
         {
-            _balls.Add(new Ball(Paddle.getPosition(), Paddle.getBounds().Height, _paddle.getDirection(), AttachedStatus.ATTACHED));
+            BallsHandler.AddBall(new Ball(Paddle.getPosition(), Paddle.getBounds().Height, Paddle.getDirection(), AttachedStatus.ATTACHED));
         }
 
         checkChangeScene();
@@ -383,7 +370,9 @@ public class GameScene : Scene
     {
         Rectangle paddleBounds = Paddle.getBounds();
 
-        foreach(Ball ball in _balls)
+        List<Ball> balls = BallsHandler.GetBalls();
+
+        foreach(Ball ball in balls)
         {
             bool paddleBallCollision = false;
             if(ball.getAttachedStatus() == AttachedStatus.FREE)
@@ -393,13 +382,13 @@ public class GameScene : Scene
                 /*Balls - paddle collision*/
                 bool collision = false;
                 PartCollided sideColl = PartCollided.NONE;
-                (collision, sideColl) = areIntersecting(ballBounds, paddleBounds);
+                (collision, sideColl) = Functions.AreIntersecting(ballBounds, paddleBounds);
 
                 if(collision && (ball.getPosition().Y < paddleBounds.Y))
                 {
                     paddleBallCollision = true;
                     Vector2 ballPosition = ball.getPosition();
-                    if(_paddle.isSitcky())
+                    if(Paddle.isSitcky())
                     {
                         ball.Attach();
                         bool posChanged = false;
@@ -457,7 +446,7 @@ public class GameScene : Scene
                     {
                         collision = false;
                         sideColl = PartCollided.NONE;
-                        (collision, sideColl) = areIntersecting(ballBounds, brickBounds);
+                        (collision, sideColl) = Functions.AreIntersecting(ballBounds, brickBounds);
 
                         if (collision)
                         {
@@ -494,10 +483,13 @@ public class GameScene : Scene
                 else if (ballBounds.Bottom > _roomBounds.Bottom)
                 {
                     ball.toRemove = true;
-                    int paddleLives = _paddle.getLives();
-                    paddleLives--;
-                    _paddle.setLives(paddleLives);
-                    _ui.UpdateLivesText(paddleLives);
+                    // if(BallsHandler.GetBallsCount() == 0)
+                    // {
+                    //     int paddleLives = _paddle.getLives();
+                    //     paddleLives--;
+                    //     _paddle.setLives(paddleLives);
+                    //     _ui.UpdateLivesText(paddleLives);
+                    // }
                     _score -= LOST_BALL_SCORE;
                     if(_score < 0)
                         _score = 0;
@@ -594,10 +586,7 @@ public class GameScene : Scene
         // Update the colorMap
         _colorSwapMaterial.SetParameter("ColorMap", _colorMap);
 
-        foreach(Ball ball in _balls)
-        {
-            ball.Draw();
-        }
+        BallsHandler.Draw();
 
         foreach(Brick brick in _bricks)
         {
@@ -659,29 +648,6 @@ public class GameScene : Scene
         _ui.Draw();
 
         base.Draw(gameTime);
-    }
-
-    public static (bool, PartCollided) areIntersecting(Circle circle, Rectangle rectangle)
-    {
-        int distanceX = Math.Abs(circle.X - rectangle.Center.X);
-        int distanceY = Math.Abs(circle.Y - rectangle.Center.Y);
-
-        float halfRectWidth = rectangle.Width * 0.5f;
-        float halfRectHeight = rectangle.Height * 0.5f;
-
-        if((distanceX > (halfRectWidth + circle.Radius)) ||
-           (distanceY > (halfRectHeight + circle.Radius)))
-        {
-            return (false, PartCollided.NONE);
-        }
-
-        if(distanceX <= halfRectWidth) return  (true, PartCollided.SIDEX);
-
-        if(distanceY <= halfRectHeight) return (true, PartCollided.SIDEY);
-
-        double cornerDistanceSquare = Math.Pow(distanceX-halfRectWidth, 2) + Math.Pow(distanceY-halfRectHeight, 2);
-
-        return (cornerDistanceSquare <= Math.Pow(circle.Radius, 2), PartCollided.ANGLE);
     }
 
     private void LoadLevel(LevelConfig config)

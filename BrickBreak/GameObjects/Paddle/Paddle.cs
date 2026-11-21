@@ -53,7 +53,7 @@ public class Paddle
     private const float SLOW_SPEED = 6f;
     private const float FAST_SPEED = 10.0f;
 
-    private int _lives = 3;
+    private static int _lives;
 
     private static Rectangle _roomBounds;
 
@@ -89,6 +89,8 @@ public class Paddle
             windowHeight * 0.975f);
 
         _scale = new(SizeScale.NORMAL, SCALE_Y);
+
+        _lives = 3;
 
         _roomBounds = roomBounds;
     }
@@ -232,7 +234,7 @@ public class Paddle
         return bounds;
     }
 
-    public float getDirection()
+    public static float getDirection()
     {
         return _velocity.X;
     }
@@ -242,22 +244,22 @@ public class Paddle
         return _position;
     }
 
-    public float getPaddleHeight()
+    public static float getPaddleHeight()
     {
         return _paddleSprite.Height;
     }
 
-    public float getVelocity()
+    public static float getVelocity()
     {
         return _velocity.X;
     }
 
-    public int getLives()
+    public static int getLives()
     {
         return _lives;
     }
 
-    public void setLives(int lives)
+    public static void setLives(int lives)
     {
         _lives = lives;
     }
@@ -269,6 +271,7 @@ public class Paddle
 
     public void hitPowerUp(collectibleType type)
     {
+        bool updatePaddleSprite = true;
 
         _speedState = type switch
         {
@@ -307,6 +310,10 @@ public class Paddle
             case collectibleType.MAGNETIC:
                 _powerUpSpecialTimer = POWER_UP_TIME_DURATION;
             break;
+            case collectibleType.BALL_SPLIT:
+                BallsHandler.SplitBalls();
+                updatePaddleSprite = false;
+            break;
         }
 
         if(_specialState != SpecialState.STICKY && oldSpecialState == SpecialState.STICKY)
@@ -314,7 +321,10 @@ public class Paddle
             Ball.Detach();
         }
 
-        UpdatePaddleSprite();
+        if(updatePaddleSprite)
+        {
+            UpdatePaddleSprite();
+        }
     }
 
     private static void setSpeedState(SpeedState speedState)
@@ -337,7 +347,6 @@ public class Paddle
 
     private static void UpdatePaddleSprite()
     {
-
         Texture2D newSprite = _textureDict[_specialState][_speedState];
 
         restoreScale();
@@ -368,7 +377,7 @@ public class Paddle
         _paddleSprite.Scale = _scale;
     }
 
-    public bool isSitcky()
+    public static bool isSitcky()
     {
         if(_specialState == SpecialState.STICKY)
         {
