@@ -314,6 +314,10 @@ public class Paddle
                 BallsHandler.SplitBalls();
                 updatePaddleSprite = false;
             break;
+            case collectibleType.LIVES:
+                _lives++;
+                updatePaddleSprite = false;
+            break;
         }
 
         if(_specialState != SpecialState.STICKY && oldSpecialState == SpecialState.STICKY)

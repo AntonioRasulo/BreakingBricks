@@ -24,6 +24,7 @@ public class CollectibleHandler
     public static Texture2D _stickySprite;
     public static Texture2D _enlargeSprite;
     public static Texture2D _magneticSprite;
+    public static Texture2D _livesSprite;
 
     private static SoundEffect _collectSound;
 
@@ -55,6 +56,7 @@ public class CollectibleHandler
         _enlargeSprite = Core.Content.Load<Texture2D>("images/PowerUp/Blue two sides arrow Black outline");
         _magneticSprite = Core.Content.Load<Texture2D>("images/PowerUp/Magnetic");
         _ballSplitPowerAnimation = splitBallAtlas.GetAnimation("ball_glowing_animation");
+        _livesSprite = Core.Content.Load<Texture2D>("images/PowerUp/heart_32x32");
 
         _marbleBagContent =
         [
@@ -72,6 +74,7 @@ public class CollectibleHandler
             collectibleType.NONE,
             collectibleType.BALL_SPLIT,
             collectibleType.BALL_FIRE,
+            collectibleType.LIVES,
             collectibleType.NONE,
             collectibleType.NONE,
             collectibleType.SPEED_UP,
@@ -88,6 +91,7 @@ public class CollectibleHandler
             collectibleType.NONE,
             collectibleType.BALL_SPLIT,
             collectibleType.BALL_FIRE,
+            collectibleType.LIVES,
             collectibleType.NONE,
             collectibleType.NONE,
             collectibleType.SPEED_UP,
@@ -104,6 +108,7 @@ public class CollectibleHandler
             collectibleType.NONE,
             collectibleType.BALL_SPLIT,
             collectibleType.BALL_FIRE,
+            collectibleType.LIVES,
             collectibleType.NONE,
             collectibleType.NONE
         ];
@@ -158,6 +163,9 @@ public class CollectibleHandler
             break;
             case collectibleType.BALL_SPLIT:
                 _collectibles.Add(new PowerUpAnimation(position, collectibleType.BALL_SPLIT, 0.3f));
+            break;
+            case collectibleType.LIVES:
+                _collectibles.Add(new PowerUpSprite(position, collectibleType.LIVES, 1f, 1f));
             break;
         }
     }

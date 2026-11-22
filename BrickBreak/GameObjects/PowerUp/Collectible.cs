@@ -13,7 +13,8 @@ public enum collectibleType
     SHRINK,
     MAGNETIC,
     BALL_SPLIT,
-    BALL_FIRE
+    BALL_FIRE,
+    LIVES
 }
 
 public abstract class Collectible
