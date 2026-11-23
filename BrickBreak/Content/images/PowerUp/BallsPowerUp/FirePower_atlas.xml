@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas>
+    <Texture>images/PowerUp/BallsPowerUp/IdleLoop-Sheet</Texture>
+    <Regions>
+        <Region name="fire1" x="26" y="19" width="11" height="16" />
+        <Region name="fire2" x="90" y="19" width="10" height="16" />
+        <Region name="fire3" x="156" y="21" width="7" height="14" />
+        <Region name="fire4" x="219" y="20" width="9" height="15" />
+    </Regions>
+    <Animations>
+        <Animation name="fire_powerup_animation" delay="50">
+            <Frame region="fire1" />
+            <Frame region="fire2" />
+            <Frame region="fire3" />
+            <Frame region="fire4" />
+        </Animation>
+    </Animations>
+</TextureAtlas>

@@ -21,6 +21,7 @@ public class CollectibleHandler
     public static Animation _speedUpAnimation;
     public static Animation _speedDownAnimation;
     public static Animation _ballSplitPowerAnimation;
+    public static Animation _ballFirePowerAnimation;
     public static Texture2D _stickySprite;
     public static Texture2D _enlargeSprite;
     public static Texture2D _magneticSprite;
@@ -49,6 +50,7 @@ public class CollectibleHandler
         TextureAtlas speedUpAtlas = TextureAtlas.FromFile(Core.Content, "images/PowerUp/SpeedUp/SpeedUpAtlas.xml");
         TextureAtlas speedDownAtlas = TextureAtlas.FromFile(Core.Content, "images/PowerUp/SpeedDown/SpeedDownAtlas.xml");
         TextureAtlas splitBallAtlas = TextureAtlas.FromFile(Core.Content, "images/PowerUp/BallsPowerUp/SplitPower_atlas.xml");
+        TextureAtlas fireBallAtlas = TextureAtlas.FromFile(Core.Content, "images/PowerUp/BallsPowerUp/FirePower_atlas.xml");
 
         _speedUpAnimation = speedUpAtlas.GetAnimation("speedup-bonus-animation");
         _speedDownAnimation = speedDownAtlas.GetAnimation("speeddown-bonus-animation");
@@ -57,6 +59,7 @@ public class CollectibleHandler
         _magneticSprite = Core.Content.Load<Texture2D>("images/PowerUp/Magnetic");
         _ballSplitPowerAnimation = splitBallAtlas.GetAnimation("ball_glowing_animation");
         _livesSprite = Core.Content.Load<Texture2D>("images/PowerUp/heart_32x32");
+        _ballFirePowerAnimation = fireBallAtlas.GetAnimation("fire_powerup_animation");
 
         _marbleBagContent =
         [
@@ -164,8 +167,11 @@ public class CollectibleHandler
             case collectibleType.BALL_SPLIT:
                 _collectibles.Add(new PowerUpAnimation(position, collectibleType.BALL_SPLIT, 0.3f));
             break;
+            case collectibleType.BALL_FIRE:
+                _collectibles.Add(new PowerUpAnimation(position, collectibleType.BALL_FIRE, 2.5f));
+            break;
             case collectibleType.LIVES:
-                _collectibles.Add(new PowerUpSprite(position, collectibleType.LIVES, 1f, 1f));
+                _collectibles.Add(new PowerUpSprite(position, collectibleType.LIVES, 1.5f, 1.5f));
             break;
         }
     }
